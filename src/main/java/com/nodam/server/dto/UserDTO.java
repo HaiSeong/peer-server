@@ -7,6 +7,7 @@ public class UserDTO {
     private String phoneNumber;
     private boolean gender;
     private String major;
+    private int grade;
     private boolean finding = false;
 
     public UserDTO() {
@@ -16,15 +17,18 @@ public class UserDTO {
         this.phoneNumber = "";
         this.gender = false;
         this.major = "";
+        this.grade = 1;
         this.finding = false;
     }
-    public UserDTO(String id, String password, String name, String phoneNumber, boolean gender, String major, boolean finding) {
+
+    public UserDTO(String id, String password, String name, String phoneNumber, boolean gender, String major, int grade, boolean finding) {
         this.id = id;
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.gender = gender;
         this.major = major;
+        this.grade = grade;
         this.finding = finding;
     }
 
@@ -72,6 +76,14 @@ public class UserDTO {
         return major;
     }
 
+    public int getGrade() {
+        return grade;
+    }
+
+    public void setGrade(int grade) {
+        this.grade = grade;
+    }
+
     public void setMajor(String major) {
         this.major = major;
     }
@@ -82,5 +94,19 @@ public class UserDTO {
 
     public void setFinding(boolean finding) {
         this.finding = finding;
+    }
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "id='" + id + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", gender=" + gender +
+                ", major='" + major + '\'' +
+                ", grade=" + grade +
+                ", finding=" + finding +
+                '}';
     }
 }

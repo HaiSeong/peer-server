@@ -2,9 +2,11 @@ package com.nodam.server.service;
 
 import com.nodam.server.dto.UserDTO;
 import com.nodam.server.repository.UserRepository;
+import org.apache.ibatis.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 
@@ -37,5 +39,9 @@ public class UserService {
 
     public int deleteUser(String id){
         return userRepository.deleteUser(id);
+    }
+
+    public boolean isUser(String id){
+        return !userRepository.getUserById(id).getId().equals("");
     }
 }
