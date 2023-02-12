@@ -1,7 +1,6 @@
 package com.nodam.server.security;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -28,5 +27,14 @@ public class SecurityService {
                 .signWith(signingKey, signatureAlgorithm)
                 .setExpiration(new Date(System.currentTimeMillis() + expTime))
                 .compact();
+    }
+
+    public String getSubject(String token){
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
     }
 }
