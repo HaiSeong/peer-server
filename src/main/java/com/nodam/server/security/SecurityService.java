@@ -29,7 +29,7 @@ public class SecurityService {
                 .compact();
     }
 
-    public String getSubject(String token){
+    public String getSubject(String token) throws ExpiredJwtException{
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
                 .build()

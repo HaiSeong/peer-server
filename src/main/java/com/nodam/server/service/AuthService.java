@@ -3,15 +3,14 @@ package com.nodam.server.service;
 import com.nodam.server.dto.LoginDTO;
 import com.nodam.server.dto.UserDTO;
 import com.nodam.server.security.SecurityService;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
@@ -25,7 +24,7 @@ public class AuthService {
     SecurityService securityService;
 
 
-    public String login(LoginDTO loginDTO, HttpServletResponse response){
+    public String createRefreshToken(LoginDTO loginDTO) {
         WebClient.Builder builder = WebClient.builder();
         Map sejongResponse = builder.build()
                 .post()
@@ -36,11 +35,9 @@ public class AuthService {
                 .block();
 
         Map result = (Map) sejongResponse.get("result");
-
         boolean isAuth = (boolean) result.get("is_auth");
         if (!isAuth)
-            return "login failed";
-
+            throw new RuntimeException("login failed");
         if (!userService.isUser(loginDTO.getId())) {
             UserDTO userDTO = new UserDTO();
             System.out.println(userDTO.toString());
@@ -54,11 +51,20 @@ public class AuthService {
             userService.insertUser(userDTO);
         }
 
-        return securityService.createToken(loginDTO.getId(), 30 * 60 * 1000);
+        return securityService.createToken(loginDTO.getId(), 7 * 24 * 60 * 60 * 1000L);
+    }
+
+    public String createAccessToken(String refreshToken) throws Exception {
+        try {
+            String subject = securityService.getSubject(refreshToken);
+            return securityService.createToken(subject, 2 * 60 * 60 * 1000L);
+        } catch (Exception e){
+            throw new Exception("invalid auth");
+        }
     }
 
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("token", null);
+        Cookie cookie = new Cookie("refreshToken", null);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
         return new ResponseEntity<>("logout", HttpStatus.OK);
@@ -66,9 +72,11 @@ public class AuthService {
 
 
     public ResponseEntity<?> refresh(Cookie token) {
-        if (token == null)
-            return new ResponseEntity<>("no", HttpStatus.UNAUTHORIZED);
-        String subject = securityService.getSubject(token.getValue());
-        return new ResponseEntity<>(subject, HttpStatus.OK);
+        try {
+            String subject = securityService.getSubject(token.getValue());
+            return new ResponseEntity<>(subject, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>("invalid auth", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
     }
 }
