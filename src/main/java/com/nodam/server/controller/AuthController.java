@@ -48,10 +48,17 @@ public class AuthController {
 
 
     @GetMapping("/refresh")
-    public ResponseEntity<?> refresh(@CookieValue(value = "refreshToken", required = false) Cookie refreshToken) {
+    public ResponseEntity<?> refresh(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
         try {
-            String accessToken = authService.createAccessToken(refreshToken.getValue());
-            return new ResponseEntity<>(refreshToken, HttpStatus.OK);
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refreshToken")) {
+                    Cookie refreshToken = cookie;
+                    String accessToken = authService.createAccessToken(refreshToken.getValue());
+                    return new ResponseEntity<>(accessToken, HttpStatus.OK);
+                }
+            }
+            throw new Exception("no refreshToken");
         } catch (Exception e){
             return new ResponseEntity<>("refresh failed", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
