@@ -5,37 +5,50 @@ public class UserDTO {
     private String password;
     private String name;
     private String phoneNumber;
-    private boolean gender;
+    private String gender;
     private String major;
+    private String college;
     private int studentNumber;
     private int grade;
-    private String role;
     private boolean finding = false;
+    private String role;
+    private boolean sameGender;
+    private String range;
 
     public UserDTO() {
         this.id = "";
         this.password = "";
         this.name = "";
-        this.phoneNumber = "";
-        this.gender = false;
         this.major = "";
         this.studentNumber = 0;
         this.grade = 1;
-        this.role = "";
         this.finding = false;
     }
 
-    public UserDTO(String id, String password, String name, String phoneNumber, boolean gender, String major, int studentNumber, int grade, String role, boolean finding) {
+    public UserDTO(String id, String password, String name, String major, int studentNumber, int grade, boolean finding) {
         this.id = id;
         this.password = password;
         this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.gender = gender;
         this.major = major;
         this.studentNumber = studentNumber;
         this.grade = grade;
-        this.role = role;
         this.finding = finding;
+    }
+
+    public String getCollege() {
+        return college;
+    }
+
+    public void setCollege(String college) {
+        this.college = college;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getId() {
@@ -70,13 +83,6 @@ public class UserDTO {
         this.phoneNumber = phoneNumber;
     }
 
-    public boolean isGender() {
-        return gender;
-    }
-
-    public void setGender(boolean gender) {
-        this.gender = gender;
-    }
 
     public String getMajor() {
         return major;
@@ -118,6 +124,22 @@ public class UserDTO {
         this.role = role;
     }
 
+    public boolean isSameGender() {
+        return sameGender;
+    }
+
+    public void setSameGender(boolean sameGender) {
+        this.sameGender = sameGender;
+    }
+
+    public String getRange() {
+        return range;
+    }
+
+    public void setRange(String range) {
+        this.range = range;
+    }
+
     @Override
     public String toString() {
         return "UserDTO{" +
@@ -129,8 +151,10 @@ public class UserDTO {
                 ", major='" + major + '\'' +
                 ", studentNumber=" + studentNumber +
                 ", grade=" + grade +
-                ", role='" + role + '\'' +
                 ", finding=" + finding +
+                ", role='" + role + '\'' +
+                ", sameGender=" + sameGender +
+                ", range='" + range + '\'' +
                 '}';
     }
 }

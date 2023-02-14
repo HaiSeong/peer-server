@@ -29,9 +29,7 @@ public class AuthController {
     public ResponseEntity<?> login (@RequestBody LoginDTO loginDTO, HttpServletResponse response){
         try {
             String refreshToken = authService.createRefreshToken(loginDTO);
-            System.out.println("-------------------2");
             String accessToken = authService.createAccessToken(refreshToken);
-            System.out.println("-------------------3");
             response.setHeader("Set-Cookie",
                     "refreshToken=" + refreshToken + ";" +
                             " Path=/; Domain=localhost;" +
