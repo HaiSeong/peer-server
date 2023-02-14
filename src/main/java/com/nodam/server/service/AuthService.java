@@ -40,14 +40,13 @@ public class AuthService {
             throw new RuntimeException("login failed");
         if (!userService.isUser(loginDTO.getId())) {
             UserDTO userDTO = new UserDTO();
-            System.out.println(userDTO.toString());
             userDTO.setId(loginDTO.getId());
             userDTO.setPassword(loginDTO.getPw());
+            userDTO.setStudentNumber(Integer.parseInt(loginDTO.getId().substring(0,2)));
             Map body = (Map) result.get("body");
             userDTO.setName((String) body.get("name"));
             userDTO.setMajor((String) body.get("major"));
             userDTO.setGrade(Integer.valueOf((String) body.get("grade")));
-            System.out.println(userDTO.toString());
             userService.insertUser(userDTO);
         }
 

@@ -7,7 +7,9 @@ public class UserDTO {
     private String phoneNumber;
     private boolean gender;
     private String major;
+    private int studentNumber;
     private int grade;
+    private String role;
     private boolean finding = false;
 
     public UserDTO() {
@@ -17,18 +19,22 @@ public class UserDTO {
         this.phoneNumber = "";
         this.gender = false;
         this.major = "";
+        this.studentNumber = 0;
         this.grade = 1;
+        this.role = "";
         this.finding = false;
     }
 
-    public UserDTO(String id, String password, String name, String phoneNumber, boolean gender, String major, int grade, boolean finding) {
+    public UserDTO(String id, String password, String name, String phoneNumber, boolean gender, String major, int studentNumber, int grade, String role, boolean finding) {
         this.id = id;
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.gender = gender;
         this.major = major;
+        this.studentNumber = studentNumber;
         this.grade = grade;
+        this.role = role;
         this.finding = finding;
     }
 
@@ -96,6 +102,22 @@ public class UserDTO {
         this.finding = finding;
     }
 
+    public int getStudentNumber() {
+        return studentNumber;
+    }
+
+    public void setStudentNumber(int studentNumber) {
+        this.studentNumber = studentNumber;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     @Override
     public String toString() {
         return "UserDTO{" +
@@ -105,7 +127,9 @@ public class UserDTO {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", gender=" + gender +
                 ", major='" + major + '\'' +
+                ", studentNumber=" + studentNumber +
                 ", grade=" + grade +
+                ", role='" + role + '\'' +
                 ", finding=" + finding +
                 '}';
     }

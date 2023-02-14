@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.websocket.server.PathParam;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,15 +29,19 @@ public class AuthController {
     public ResponseEntity<?> login (@RequestBody LoginDTO loginDTO, HttpServletResponse response){
         try {
             String refreshToken = authService.createRefreshToken(loginDTO);
+            System.out.println("-------------------2");
             String accessToken = authService.createAccessToken(refreshToken);
+            System.out.println("-------------------3");
             response.setHeader("Set-Cookie",
-                    "accessToken=" + accessToken + ";" +
+                    "refreshToken=" + refreshToken + ";" +
                             " Path=/; Domain=localhost;" +
                             " HttpOnly; Max-Age=604800;" +
                             " Secure;" +
                             " SameSite=None;");
 
-            return new ResponseEntity<>(refreshToken, HttpStatus.OK);
+            Map<String, String> map = new HashMap<>();
+            map.put("accessToken", accessToken);
+            return new ResponseEntity<>(map, HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>("login failed", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
@@ -55,7 +61,10 @@ public class AuthController {
                 if (cookie.getName().equals("refreshToken")) {
                     Cookie refreshToken = cookie;
                     String accessToken = authService.createAccessToken(refreshToken.getValue());
-                    return new ResponseEntity<>(accessToken, HttpStatus.OK);
+
+                    Map<String, String> map = new HashMap<>();
+                    map.put("accessToken", accessToken);
+                    return new ResponseEntity<>(map, HttpStatus.OK);
                 }
             }
             throw new Exception("no refreshToken");
