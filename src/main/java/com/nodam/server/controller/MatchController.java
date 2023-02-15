@@ -49,7 +49,14 @@ public class MatchController {
 
     @PostMapping("/break")
     public  ResponseEntity<?> breakRelationship(HttpServletRequest request){
-        return new ResponseEntity<>("", HttpStatus.OK);
+        try {
+            String accessToken = request.getHeader("Authorization");
+            String id = authService.validateAccessToken(accessToken);
+            matchService.breakRelationship(id);
+            return new ResponseEntity<>("break", HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>("bad token", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
     }
 
 }

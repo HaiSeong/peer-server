@@ -38,7 +38,7 @@ public class UserService {
 
     public int updateUser(String id, UserDTO user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.updateUserPw(id, user);
+        return userRepository.updateUser(id, user);
     }
 
     public int deleteUser(String id){

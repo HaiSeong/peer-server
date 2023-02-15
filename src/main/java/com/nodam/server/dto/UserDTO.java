@@ -4,16 +4,17 @@ public class UserDTO {
     private String id;
     private String password;
     private String name;
-    private String phoneNumber;
     private String major;
     private String college;
     private int studentNumber;
     private int grade;
     private boolean finding = false;
     private String status;
+    private String phoneNumber;
     private String purpose;
     private String targetGender;
     private String targetBoundary;
+    private String partnerId;
 
     public UserDTO() {
         this.id = "";
@@ -141,6 +142,14 @@ public class UserDTO {
 
     public void setTargetBoundary(String targetBoundary) {
         this.targetBoundary = targetBoundary;
+    }
+
+    public String getPartnerId() {
+        return partnerId;
+    }
+
+    public void setPartnerId(String partnerId) {
+        this.partnerId = partnerId;
     }
 
     @Override

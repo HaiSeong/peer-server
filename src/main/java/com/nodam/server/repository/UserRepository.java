@@ -35,7 +35,7 @@ public class UserRepository {
         return mapper.getUserById(id);
     }
 
-    public int updateUserPw(String id, UserDTO userDTO) {
+    public int updateUser(String id, UserDTO userDTO) {
         if (mapper.getUserById(id) == null)
             return 0;
         mapper.updateUser(id, userDTO);

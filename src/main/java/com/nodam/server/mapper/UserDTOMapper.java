@@ -21,7 +21,7 @@ public interface UserDTOMapper {
         @Select("SELECT * FROM UserDTO WHERE id=#{id};")
         public UserDTO getUserById(@Param("id") String id);
 
-        @Update("UPDATE `nodam_db`.`UserDTO` SET `password` = #{userDTO.password}, `name` = #{userDTO.name}, `major` = #{userDTO.major}, `college` = #{userDTO.college}, `studentNumber` = #{userDTO.studentNumber}, `grade` = #{userDTO.grade}, `finding` = #{userDTO.finding}, `status` = #{userDTO.status} WHERE (`id` = #{id});")
+        @Update("UPDATE `nodam_db`.`UserDTO` SET `password` = #{userDTO.password}, `name` = #{userDTO.name}, `major` = #{userDTO.major}, `college` = #{userDTO.college}, `studentNumber` = #{userDTO.studentNumber}, `grade` = #{userDTO.grade}, `finding` = #{userDTO.finding}, `phoneNumber` = #{userDTO.phoneNumber}, `purpose` = #{userDTO.purpose}, `targetGender` = #{userDTO.targetGender}, `targetBoundary` = #{userDTO.targetBoundary}, `partnerId` = #{userDTO.partnerId} WHERE `id` = #{id}; ")
         public int updateUser(@Param("id") String id, @RequestBody UserDTO userDTO);
 
         @Delete("DELETE FROM `nodam_db`.`UserDTO` WHERE (`id` = #{id});")

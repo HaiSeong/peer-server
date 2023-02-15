@@ -2,8 +2,10 @@ package com.nodam.server.service;
 
 import com.nodam.server.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -95,5 +97,14 @@ public class MatchService {
         return map;
     }
 
-
+    public void breakRelationship(String id){
+        UserDTO userDTO = userService.getUserById(id);
+        userDTO.setPartnerId(null);
+        userDTO.setStatus("NOT_REGISTER");
+        userDTO.setPhoneNumber(null);
+        userDTO.setPurpose(null);
+        userDTO.setTargetGender(null);
+        userDTO.setTargetBoundary(null);
+        userService.updateUser(id, userDTO);
+    }
 }
