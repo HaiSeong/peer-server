@@ -9,7 +9,7 @@ import java.util.ArrayList;
 @Mapper
 public interface UserDTOMapper {
 
-        @Insert("INSERT INTO `nodam_db`.`UserDTO` (`id`, `password`, `name`, `major`, `college`, `studentNumber`, `grade`, `finding`) VALUES (#{id}, #{password}, #{name}, #{major}, #{college}, #{studentNumber}, #{grade}, #{finding})")
+        @Insert("INSERT INTO `nodam_db`.`UserDTO` (`id`, `password`, `name`, `major`, `college`, `studentNumber`, `grade`, `finding`, `status`) VALUES (#{id}, #{password}, #{name}, #{major}, #{college}, #{studentNumber}, #{grade}, #{finding}, #{status})")
         public int insertUser(@RequestBody UserDTO user);
 
         @Select("SELECT * FROM UserDTO;")
@@ -21,7 +21,7 @@ public interface UserDTOMapper {
         @Select("SELECT * FROM UserDTO WHERE id=#{id};")
         public UserDTO getUserById(@Param("id") String id);
 
-        @Update("UPDATE `nodam_db`.`UserDTO` SET `password` = #{userDTO.password}, `name` = #{userDTO.name}, `major` = #{userDTO.major}, `college` = #{userDTO.college}, `studentNumber` = #{userDTO.studentNumber}, `grade` = #{userDTO.grade}, `finding` = #{userDTO.finding} WHERE (`id` = #{id});")
+        @Update("UPDATE `nodam_db`.`UserDTO` SET `password` = #{userDTO.password}, `name` = #{userDTO.name}, `major` = #{userDTO.major}, `college` = #{userDTO.college}, `studentNumber` = #{userDTO.studentNumber}, `grade` = #{userDTO.grade}, `finding` = #{userDTO.finding}, `status` = #{userDTO.status} WHERE (`id` = #{id});")
         public int updateUser(@Param("id") String id, @RequestBody UserDTO userDTO);
 
         @Delete("DELETE FROM `nodam_db`.`UserDTO` WHERE (`id` = #{id});")

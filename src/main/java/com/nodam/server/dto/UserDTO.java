@@ -5,15 +5,15 @@ public class UserDTO {
     private String password;
     private String name;
     private String phoneNumber;
-    private String gender;
     private String major;
     private String college;
     private int studentNumber;
     private int grade;
     private boolean finding = false;
-    private String role;
-    private boolean sameGender;
-    private String range;
+    private String status;
+    private String purpose;
+    private String targetGender;
+    private String targetBoundary;
 
     public UserDTO() {
         this.id = "";
@@ -23,16 +23,19 @@ public class UserDTO {
         this.studentNumber = 0;
         this.grade = 1;
         this.finding = false;
+        this.status = "NOT_REGISTER";
     }
 
-    public UserDTO(String id, String password, String name, String major, int studentNumber, int grade, boolean finding) {
+    public UserDTO(String id, String password, String name, String major, String college, int studentNumber, int grade, boolean finding, String status) {
         this.id = id;
         this.password = password;
         this.name = name;
-        this.major = major;
+        this.major = major;;
+        this.college = college;
         this.studentNumber = studentNumber;
         this.grade = grade;
         this.finding = finding;
+        this.status = status;
     }
 
     public String getCollege() {
@@ -41,14 +44,6 @@ public class UserDTO {
 
     public void setCollege(String college) {
         this.college = college;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
     }
 
     public String getId() {
@@ -116,28 +111,36 @@ public class UserDTO {
         this.studentNumber = studentNumber;
     }
 
-    public String getRole() {
-        return role;
+    public String getPurpose() {
+        return purpose;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
     }
 
-    public boolean isSameGender() {
-        return sameGender;
+    public String getStatus() {
+        return status;
     }
 
-    public void setSameGender(boolean sameGender) {
-        this.sameGender = sameGender;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public String getRange() {
-        return range;
+    public String getTargetGender() {
+        return targetGender;
     }
 
-    public void setRange(String range) {
-        this.range = range;
+    public void setTargetGender(String targetGender) {
+        this.targetGender = targetGender;
+    }
+
+    public String getTargetBoundary() {
+        return targetBoundary;
+    }
+
+    public void setTargetBoundary(String targetBoundary) {
+        this.targetBoundary = targetBoundary;
     }
 
     @Override
@@ -147,14 +150,15 @@ public class UserDTO {
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
-                ", gender=" + gender +
                 ", major='" + major + '\'' +
+                ", college='" + college + '\'' +
                 ", studentNumber=" + studentNumber +
                 ", grade=" + grade +
                 ", finding=" + finding +
-                ", role='" + role + '\'' +
-                ", sameGender=" + sameGender +
-                ", range='" + range + '\'' +
+                ", status='" + status + '\'' +
+                ", purpose='" + purpose + '\'' +
+                ", targetGender='" + targetGender + '\'' +
+                ", targetBoundary='" + targetBoundary + '\'' +
                 '}';
     }
 }

@@ -12,6 +12,7 @@ import reactor.core.publisher.Mono;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -69,13 +70,26 @@ public class AuthService {
         return new ResponseEntity<>("logout", HttpStatus.OK);
     }
 
-
-    public ResponseEntity<?> refresh(Cookie token) {
+    public ResponseEntity<?> refresh(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
         try {
-            String subject = securityService.getSubject(token.getValue());
-            return new ResponseEntity<>(subject, HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>("invalid auth", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refreshToken")) {
+                    Cookie refreshToken = cookie;
+                    String accessToken = createAccessToken(refreshToken.getValue());
+
+                    Map<String, String> map = new HashMap<>();
+                    map.put("accessToken", accessToken);
+                    return new ResponseEntity<>(map, HttpStatus.OK);
+                }
+            }
+            throw new Exception("no refreshToken");
+        } catch (Exception e){
+            return new ResponseEntity<>("refresh failed", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
+    }
+
+    public String validateAccessToken(String accessToken) {
+        return securityService.getSubject(accessToken);
     }
 }

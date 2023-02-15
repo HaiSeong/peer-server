@@ -28,6 +28,10 @@ public class UserService {
         return userRepository.getAllUsers();
     }
 
+    public ArrayList<UserDTO> getFindingUsers(){
+        return userRepository.getFindingUsers();
+    }
+
     public UserDTO getUserById(String id){
         return userRepository.getUserById(id);
     }
