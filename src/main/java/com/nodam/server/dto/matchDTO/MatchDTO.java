@@ -1,8 +1,17 @@
 package com.nodam.server.dto.matchDTO;
 
 public class MatchDTO {
+    private String gender;
     private String purpose;
     private String targetGender;
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
     public String getPurpose() {
         return purpose;

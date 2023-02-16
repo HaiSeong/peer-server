@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @Service
 public class UserService {
@@ -25,11 +26,17 @@ public class UserService {
     }
 
     public ArrayList<UserDTO> getAllUsers(){
-        return userRepository.getAllUsers();
+        ArrayList<UserDTO> users = userRepository.getAllUsers();
+        if (users.size() == 0)
+            return new ArrayList<>();
+        return users;
     }
 
     public ArrayList<UserDTO> getFindingUsers(){
-        return userRepository.getFindingUsers();
+        ArrayList<UserDTO> users = userRepository.getFindingUsers();
+        if (users.size() == 0)
+            return new ArrayList<>();
+        return users;
     }
 
     public UserDTO getUserById(String id){

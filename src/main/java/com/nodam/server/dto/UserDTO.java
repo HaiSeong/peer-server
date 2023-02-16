@@ -1,5 +1,7 @@
 package com.nodam.server.dto;
 
+import java.time.LocalDateTime;
+
 public class UserDTO {
     private String id;
     private String password;
@@ -10,10 +12,12 @@ public class UserDTO {
     private int grade;
     private boolean finding = false;
     private String status;
+    private String gender;
     private String phoneNumber;
     private String purpose;
     private String targetGender;
     private String targetBoundary;
+    private LocalDateTime searchStart;
     private String partnerId;
 
     public UserDTO() {
@@ -69,6 +73,14 @@ public class UserDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getPhoneNumber() {
@@ -150,6 +162,14 @@ public class UserDTO {
 
     public void setPartnerId(String partnerId) {
         this.partnerId = partnerId;
+    }
+
+    public LocalDateTime getSearchStart() {
+        return searchStart;
+    }
+
+    public void setSearchStart(LocalDateTime searchStart) {
+        this.searchStart = searchStart;
     }
 
     @Override

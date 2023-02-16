@@ -1,6 +1,7 @@
 package com.nodam.server.security;
 
 import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -10,7 +11,9 @@ import java.security.Key;
 
 @Service
 public class SecurityService {
-    private static final String SECRET_KEY = "wjdgotjd9908asdfqwerqwerqwerqwwerqwewerewrewrq";
+
+    @Value("${server.security.secretKey}")
+    private String secretKey;
     
     public String createToken(String id, long expTime){
         if (expTime <= 0){
@@ -19,7 +22,7 @@ public class SecurityService {
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-        byte[] secretKeyBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
+        byte[] secretKeyBytes = DatatypeConverter.parseBase64Binary(secretKey);
         Key signingKey = new SecretKeySpec(secretKeyBytes, signatureAlgorithm.getJcaName());
 
         return Jwts.builder()
@@ -31,7 +34,7 @@ public class SecurityService {
 
     public String getSubject(String token) throws ExpiredJwtException{
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
+                .setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
                 .build()
                 .parseClaimsJws(token)
                 .getBody();

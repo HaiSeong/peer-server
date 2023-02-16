@@ -24,6 +24,7 @@ public class AuthService {
     @Autowired
     SecurityService securityService;
 
+    static private MajorCollegeMap majorCollegeMap = new MajorCollegeMap();
 
     public String createRefreshToken(LoginDTO loginDTO) {
         WebClient.Builder builder = WebClient.builder();
@@ -47,6 +48,7 @@ public class AuthService {
             Map body = (Map) result.get("body");
             userDTO.setName((String) body.get("name"));
             userDTO.setMajor((String) body.get("major"));
+            userDTO.setCollege(majorCollegeMap.getCollege((String) body.get("major")));
             userDTO.setGrade(Integer.valueOf((String) body.get("grade")));
             userService.insertUser(userDTO);
         }
