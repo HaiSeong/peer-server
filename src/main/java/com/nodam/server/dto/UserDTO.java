@@ -11,7 +11,7 @@ public class UserDTO {
     private int studentNumber;
     private int grade;
     private boolean finding = false;
-    private String status;
+    private String state;
     private String gender;
     private String phoneNumber;
     private String purpose;
@@ -28,10 +28,10 @@ public class UserDTO {
         this.studentNumber = 0;
         this.grade = 1;
         this.finding = false;
-        this.status = "NOT_REGISTER";
+        this.state = "NOT_REGISTER";
     }
 
-    public UserDTO(String id, String password, String name, String major, String college, int studentNumber, int grade, boolean finding, String status) {
+    public UserDTO(String id, String password, String name, String major, String college, int studentNumber, int grade, boolean finding, String state) {
         this.id = id;
         this.password = password;
         this.name = name;
@@ -40,7 +40,7 @@ public class UserDTO {
         this.studentNumber = studentNumber;
         this.grade = grade;
         this.finding = finding;
-        this.status = status;
+        this.state = state;
     }
 
     public String getCollege() {
@@ -132,12 +132,12 @@ public class UserDTO {
         this.purpose = purpose;
     }
 
-    public String getStatus() {
-        return status;
+    public String getState() {
+        return state;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getTargetGender() {
@@ -178,16 +178,19 @@ public class UserDTO {
                 "id='" + id + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
                 ", major='" + major + '\'' +
                 ", college='" + college + '\'' +
                 ", studentNumber=" + studentNumber +
                 ", grade=" + grade +
                 ", finding=" + finding +
-                ", status='" + status + '\'' +
+                ", status='" + state + '\'' +
+                ", gender='" + gender + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 ", purpose='" + purpose + '\'' +
                 ", targetGender='" + targetGender + '\'' +
                 ", targetBoundary='" + targetBoundary + '\'' +
+                ", searchStart=" + searchStart +
+                ", partnerId='" + partnerId + '\'' +
                 '}';
     }
 }

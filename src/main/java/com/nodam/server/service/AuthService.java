@@ -65,13 +65,6 @@ public class AuthService {
         }
     }
 
-    public ResponseEntity<?> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("refreshToken", null);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-        return new ResponseEntity<>("logout", HttpStatus.OK);
-    }
-
     public ResponseEntity<?> refresh(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         try {
@@ -91,7 +84,9 @@ public class AuthService {
         }
     }
 
-    public String validateAccessToken(String accessToken) {
-        return securityService.getSubject(accessToken);
+    public String validateAccessToken(String accessToken) throws Exception{
+        if (!accessToken.startsWith("Bearer"))
+            throw new Exception("bad token");
+        return securityService.getSubject(accessToken.substring(7));
     }
 }

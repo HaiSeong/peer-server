@@ -4,10 +4,8 @@ import com.nodam.server.dto.UserDTO;
 import com.nodam.server.dto.matchDTO.MatchDTO2;
 import com.nodam.server.dto.smsDTO.MessageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,9 +27,13 @@ public class MatchService {
             if (otherUser.getPurpose().equals(purpose))
                 continue;
 
-            if (targetGender.equals("MAIL") && otherUser.getGender().equals("FEMAIL"))
+            if (targetGender.equals("MALE") && otherUser.getGender().equals("FEMALE"))
                 continue;
-            else if (targetGender.equals("FEMAIL") && otherUser.getGender().equals("MAIL"))
+            else if (targetGender.equals("FEMALE") && otherUser.getGender().equals("MALE"))
+                continue;
+            if (otherUser.getTargetGender().equals("MALE") && gender.equals("FEMALE"))
+                continue;
+            else if (otherUser.getTargetGender().equals("FEMALE") && gender.equals("MALE"))
                 continue;
 
             if (otherUser.getTargetBoundary().equals("COLLEGE") && !user.getCollege().equals(otherUser.getCollege()))
@@ -45,21 +47,25 @@ public class MatchService {
         return matchedList;
     }
 
-    public ArrayList<UserDTO> getUserFitConditions(UserDTO user, String gender, String purpose, String targetGender, String targetBoundary){
+    public ArrayList<UserDTO> getUsersFitConditions(UserDTO user, String gender, String purpose, String targetGender, String targetBoundary){
         ArrayList<UserDTO> findingUsers = userService.getFindingUsers();
         ArrayList<UserDTO> matchedList = new ArrayList<>();
         for (UserDTO otherUser : findingUsers){
             if (otherUser.getPurpose().equals(purpose))
                 continue;
 
-            if (targetGender.equals("MAIL") && otherUser.getGender().equals("FEMAIL"))
+            if (targetGender.equals("MALE") && otherUser.getGender().equals("FEMALE"))
                 continue;
-            else if (targetGender.equals("FEMAIL") && otherUser.getGender().equals("MAIL"))
+            else if (targetGender.equals("FEMALE") && otherUser.getGender().equals("MALE"))
+                continue;
+            if (otherUser.getTargetGender().equals("MALE") && gender.equals("FEMALE"))
+                continue;
+            else if (otherUser.getTargetGender().equals("FEMALE") && gender.equals("MALE"))
                 continue;
 
-            if (targetBoundary.equals("MAJOR") && !otherUser.getMajor().equals(targetBoundary))
+            if (targetBoundary.equals("MAJOR") && !user.getMajor().equals(otherUser.getMajor()))
                 continue;
-            else if (targetBoundary.equals("COLLEGE") && !otherUser.getCollege().equals(targetBoundary))
+            else if (targetBoundary.equals("COLLEGE") && !user.getCollege().equals(otherUser.getCollege()))
                 continue;
             if (otherUser.getTargetBoundary().equals("MAJOR") && !user.getMajor().equals(otherUser.getMajor()))
                 continue;
@@ -74,24 +80,15 @@ public class MatchService {
 
 
     public Map<String, Integer> getPoolNumbers(String id, String gender, String purpose, String targetGender){
-        int majorCnt = 0;
-        int collegeCnt = 0;
         Map<String, Integer> map = new HashMap<>();
 
-        ArrayList<UserDTO> userPool = getUsersFitConditions(userService.getUserById(id), gender, purpose, targetGender);
+        ArrayList<UserDTO> allUserPool = getUsersFitConditions(userService.getUserById(id), gender, purpose, targetGender);
+        ArrayList<UserDTO> collegeUserPool = getUsersFitConditions(userService.getUserById(id), gender, purpose, targetGender, "COLLEGE");
+        ArrayList<UserDTO> majorUserPool = getUsersFitConditions(userService.getUserById(id), gender, purpose, targetGender, "MAJOR");
 
-        for (UserDTO otherUser : userPool) {
-            if (otherUser.getTargetBoundary().equals("MAJOR")) {
-                majorCnt++;
-                collegeCnt++;
-            } else if (otherUser.getTargetBoundary().equals("COLLEGE")) {
-                collegeCnt++;
-            }
-        }
-
-        map.put("major", majorCnt);
-        map.put("college", collegeCnt);
-        map.put("all", userPool.size());
+        map.put("major", majorUserPool.size());
+        map.put("college", collegeUserPool.size());
+        map.put("all", allUserPool.size());
 
         return map;
     }
@@ -104,16 +101,16 @@ public class MatchService {
         user.setTargetGender(matchDTO.getTargetGender());
         user.setTargetBoundary(matchDTO.getTargetBoundary());
         user.setSearchStart(LocalDateTime.now());
-        ArrayList<UserDTO> userPool = getUserFitConditions(user, user.getGender(), user.getPurpose(), user.getTargetGender(), user.getTargetBoundary());
+        ArrayList<UserDTO> userPool = getUsersFitConditions(user, user.getGender(), user.getPurpose(), user.getTargetGender(), user.getTargetBoundary());
         if (userPool.size() == 0) { // 바로 불가능한 경우
             user.setFinding(true);
-            user.setStatus("ON_GOING");
+            user.setState("ON_GOING");
             userService.updateUser(id, user);
         }
         else { // 바로 가능한 경우
             UserDTO partner = userPool.get(0);
             user.setFinding(false); partner.setFinding(false);
-            user.setStatus("DONE"); partner.setStatus("DONE");
+            user.setState("DONE"); partner.setState("DONE");
             user.setPartnerId(partner.getId()); partner.setPartnerId(user.getId());
 
             userService.updateUser(partner.getId(), partner);
@@ -130,20 +127,26 @@ public class MatchService {
     }
 
 
-    public Map<String, String> getStatus(String id) {
+    public Map<String, String> getState(String id) {
         Map<String, String> map = new HashMap<>();
-        map.put("status", userService.getUserById(id).getStatus());
+        map.put("state", userService.getUserById(id).getState());
         return map;
     }
 
     public void breakRelationship(String id){
-        UserDTO userDTO = userService.getUserById(id);
-        userDTO.setPartnerId(null);
-        userDTO.setStatus("NOT_REGISTER");
-        userDTO.setPhoneNumber(null);
-        userDTO.setPurpose(null);
-        userDTO.setTargetGender(null);
-        userDTO.setTargetBoundary(null);
-        userService.updateUser(id, userDTO);
+        UserDTO user = userService.getUserById(id);
+        UserDTO partner = userService.getUserById(user.getPartnerId());
+
+        System.out.println(user.toString());
+        System.out.println(partner.toString());
+
+        user.setPartnerId(null); partner.setPartnerId(null);
+        user.setState("NOT_REGISTER"); partner.setState("NOT_REGISTER");
+        user.setPurpose(null); partner.setPurpose(null);
+        user.setTargetGender(null); partner.setTargetGender(null);
+        user.setTargetBoundary(null); partner.setTargetBoundary(null);
+        user.setSearchStart(null); partner.setSearchStart(null);
+        userService.updateUser(id, user);
+        userService.updateUser(partner.getId(), partner);
     }
 }

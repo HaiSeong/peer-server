@@ -21,12 +21,17 @@ public class MatchController {
     private AuthService authService;
 
     @GetMapping("/pool")
-    public  ResponseEntity<?> getPoolNumbers(@RequestBody MatchDTO matchDTO, HttpServletRequest request){
+    public  ResponseEntity<?> getPoolNumbers(
+            @RequestParam(value = "gender")String gender,
+            @RequestParam(value = "purpose")String purpose,
+            @RequestParam(value = "targetGender")String targetGender,
+            HttpServletRequest request
+    ) {
         try {
             String accessToken = request.getHeader("Authorization");
             String id = authService.validateAccessToken(accessToken);
-            return new ResponseEntity<>(matchService.getPoolNumbers(id, matchDTO.getGender(), matchDTO.getPurpose(), matchDTO.getTargetGender()), HttpStatus.OK);
-        }catch (Exception e){
+            return new ResponseEntity<>(matchService.getPoolNumbers(id, gender, purpose, targetGender), HttpStatus.OK);
+        } catch (Exception e){
             return new ResponseEntity<>("bad token", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }
@@ -44,11 +49,11 @@ public class MatchController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<?> getStatus(HttpServletRequest request){
+    public ResponseEntity<?> getState(HttpServletRequest request){
         try {
             String accessToken = request.getHeader("Authorization");
             String id = authService.validateAccessToken(accessToken);
-            return new ResponseEntity<>(matchService.getStatus(id), HttpStatus.OK);
+            return new ResponseEntity<>(matchService.getState(id), HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>("bad token", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }

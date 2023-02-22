@@ -1,20 +1,13 @@
 package com.nodam.server.controller;
 
 import com.nodam.server.dto.LoginDTO;
-import com.nodam.server.dto.TokenDTO;
-import com.nodam.server.dto.UserDTO;
-import com.nodam.server.security.SecurityService;
 import com.nodam.server.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import reactor.util.annotation.Nullable;
-
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,17 +15,21 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class AuthController {
 
+    @Value("${client.domain}")
+    private String clientDomain;
+
     @Autowired
     AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login (@RequestBody LoginDTO loginDTO, HttpServletResponse response){
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
         try {
             String refreshToken = authService.createRefreshToken(loginDTO);
             String accessToken = authService.createAccessToken(refreshToken);
             response.setHeader("Set-Cookie",
                     "refreshToken=" + refreshToken + ";" +
-                            " Path=/; Domain=localhost;" +
+                            " Path=/; " +
+                            "Domain=" + clientDomain + ";" +
                             " HttpOnly; Max-Age=604800;" +
                             " Secure;" +
                             " SameSite=None;");
@@ -40,14 +37,21 @@ public class AuthController {
             Map<String, String> map = new HashMap<>();
             map.put("accessToken", accessToken);
             return new ResponseEntity<>(map, HttpStatus.OK);
-        } catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>("login failed", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response){
-        return authService.logout(response);
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        response.setHeader("Set-Cookie",
+                "refreshToken=" + ";" +
+                        " Path=/; " +
+                        "Domain=" + clientDomain + ";" +
+                        " HttpOnly; Max-Age=0;" +
+                        " Secure;" +
+                        " SameSite=None;");
+        return new ResponseEntity<>("logout", HttpStatus.OK);
     }
 
 
@@ -55,22 +59,4 @@ public class AuthController {
     public ResponseEntity<?> refresh(HttpServletRequest request) {
         return authService.refresh(request);
     }
-
-//
-//    @GetMapping("/token")
-//    public void cookie(HttpServletResponse response) {
-//        String jwt = authService.login(new LoginDTO("18010704", "19990808"), response);
-//
-//        response.setHeader("Set-Cookie", "token=" + jwt + "; Path=/; Domain=localhost; HttpOnly; Max-Age=604800; Secure; SameSite=None;");
-//    }
-//
-//
-//    @GetMapping("/check")
-//    public void infoCookie(HttpServletRequest request) {
-//        Cookie[] cookie = request.getCookies();
-//        for (Cookie cok : cookie) {
-//            System.out.println("쿠키 이름: " + cok.getName());
-//            System.out.println("쿠키 값: " + cok.getValue());
-//        }
-//    }
 }

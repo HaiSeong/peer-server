@@ -16,7 +16,6 @@ import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-//@RequiredArgsConstructor
 @RequestMapping("/sms")
 @RestController
 public class SmsController {

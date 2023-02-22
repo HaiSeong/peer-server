@@ -1,4 +1,4 @@
-package com.nodam.server;
+package com.nodam.server.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
