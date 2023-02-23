@@ -10,13 +10,15 @@ public class UserDTO {
     private String college;
     private int studentNumber;
     private int grade;
-    private boolean finding = false;
+    private boolean finding;
     private String state;
     private String gender;
     private String phoneNumber;
     private String purpose;
     private String targetGender;
     private String targetBoundary;
+    private int gradeLimit;
+    private int studentNumberLimit;
     private LocalDateTime searchStart;
     private String partnerId;
 
@@ -29,18 +31,6 @@ public class UserDTO {
         this.grade = 1;
         this.finding = false;
         this.state = "NOT_REGISTER";
-    }
-
-    public UserDTO(String id, String password, String name, String major, String college, int studentNumber, int grade, boolean finding, String state) {
-        this.id = id;
-        this.password = password;
-        this.name = name;
-        this.major = major;;
-        this.college = college;
-        this.studentNumber = studentNumber;
-        this.grade = grade;
-        this.finding = finding;
-        this.state = state;
     }
 
     public String getCollege() {
@@ -154,6 +144,22 @@ public class UserDTO {
 
     public void setTargetBoundary(String targetBoundary) {
         this.targetBoundary = targetBoundary;
+    }
+
+    public int getGradeLimit() {
+        return gradeLimit;
+    }
+
+    public void setGradeLimit(int gradeLimit) {
+        this.gradeLimit = gradeLimit;
+    }
+
+    public int getStudentNumberLimit() {
+        return studentNumberLimit;
+    }
+
+    public void setStudentNumberLimit(int studentNumberLimit) {
+        this.studentNumberLimit = studentNumberLimit;
     }
 
     public String getPartnerId() {

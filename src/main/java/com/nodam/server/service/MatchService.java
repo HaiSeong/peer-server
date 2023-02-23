@@ -1,7 +1,7 @@
 package com.nodam.server.service;
 
 import com.nodam.server.dto.UserDTO;
-import com.nodam.server.dto.matchDTO.MatchDTO2;
+import com.nodam.server.dto.MatchDTO;
 import com.nodam.server.dto.smsDTO.MessageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,13 +20,15 @@ public class MatchService {
     @Autowired
     SmsService smsService;
 
-    public ArrayList<UserDTO> getUsersFitConditions(UserDTO user, String gender, String purpose, String targetGender){
+    public ArrayList<UserDTO> getUsersFitConditions(UserDTO user, String gender, String purpose, String targetGender, int gradeLimit, int studentNumberLimit){
         ArrayList<UserDTO> findingUsers = userService.getFindingUsers();
         ArrayList<UserDTO> matchedList = new ArrayList<>();
         for (UserDTO otherUser : findingUsers){
+            // check purpose
             if (otherUser.getPurpose().equals(purpose))
                 continue;
 
+            // check targetGender
             if (targetGender.equals("MALE") && otherUser.getGender().equals("FEMALE"))
                 continue;
             else if (targetGender.equals("FEMALE") && otherUser.getGender().equals("MALE"))
@@ -36,9 +38,21 @@ public class MatchService {
             else if (otherUser.getTargetGender().equals("FEMALE") && gender.equals("MALE"))
                 continue;
 
-            if (otherUser.getTargetBoundary().equals("COLLEGE") && !user.getCollege().equals(otherUser.getCollege()))
+            // check gradeLimit and studentNumber
+            if (purpose.equals("GET_JUNIOR")){
+                if (user.getGrade() <= otherUser.getGrade() || user.getStudentNumber() >= otherUser.getStudentNumber())
+                    continue;
+            } else if(purpose.equals("GET_SENIOR")) {
+                if (user.getGrade() >= otherUser.getGrade() || user.getStudentNumber() <= otherUser.getStudentNumber())
+                    continue;
+            }
+            if (user.getGrade() - gradeLimit > otherUser.getGrade() || user.getGrade() + gradeLimit < otherUser.getGrade())
                 continue;
-            else if (otherUser.getTargetBoundary().equals("MAJOR") && !user.getMajor().equals(otherUser.getMajor()))
+            if (otherUser.getGrade() - otherUser.getGradeLimit() > user.getGrade() || otherUser.getGrade() + otherUser.getGradeLimit() < user.getGrade())
+                continue;
+            if (user.getStudentNumber() - studentNumberLimit > otherUser.getStudentNumber() || user.getStudentNumber() + studentNumberLimit < otherUser.getStudentNumber())
+                continue;
+            if (otherUser.getStudentNumber() - otherUser.getStudentNumberLimit() > user.getStudentNumber() || otherUser.getStudentNumber() + otherUser.getStudentNumberLimit() < user.getStudentNumber())
                 continue;
 
             matchedList.add(otherUser);
@@ -47,13 +61,15 @@ public class MatchService {
         return matchedList;
     }
 
-    public ArrayList<UserDTO> getUsersFitConditions(UserDTO user, String gender, String purpose, String targetGender, String targetBoundary){
+    public ArrayList<UserDTO> getUsersFitConditions(UserDTO user, String gender, String purpose, String targetGender, int gradeLimit, int studentNumberLimit, String targetBoundary){
         ArrayList<UserDTO> findingUsers = userService.getFindingUsers();
         ArrayList<UserDTO> matchedList = new ArrayList<>();
         for (UserDTO otherUser : findingUsers){
+            // check purpose
             if (otherUser.getPurpose().equals(purpose))
                 continue;
 
+            // check targetGender
             if (targetGender.equals("MALE") && otherUser.getGender().equals("FEMALE"))
                 continue;
             else if (targetGender.equals("FEMALE") && otherUser.getGender().equals("MALE"))
@@ -63,6 +79,24 @@ public class MatchService {
             else if (otherUser.getTargetGender().equals("FEMALE") && gender.equals("MALE"))
                 continue;
 
+            // check gradeLimit and studentNumber
+            if (purpose.equals("GET_JUNIOR")){
+                if (user.getGrade() <= otherUser.getGrade() || user.getStudentNumber() >= otherUser.getStudentNumber())
+                    continue;
+            } else if(purpose.equals("GET_SENIOR")) {
+                if (user.getGrade() >= otherUser.getGrade() || user.getStudentNumber() <= otherUser.getStudentNumber())
+                    continue;
+            }
+            if (user.getGrade() - gradeLimit > otherUser.getGrade() || user.getGrade() + gradeLimit < otherUser.getGrade())
+                continue;
+            if (otherUser.getGrade() - otherUser.getGradeLimit() > user.getGrade() || otherUser.getGrade() + otherUser.getGradeLimit() < user.getGrade())
+                continue;
+            if (user.getStudentNumber() - studentNumberLimit > otherUser.getStudentNumber() || user.getStudentNumber() + studentNumberLimit < otherUser.getStudentNumber())
+                continue;
+            if (otherUser.getStudentNumber() - otherUser.getStudentNumberLimit() > user.getStudentNumber() || otherUser.getStudentNumber() + otherUser.getStudentNumberLimit() < user.getStudentNumber())
+                continue;
+
+            // check targetBoundary
             if (targetBoundary.equals("MAJOR") && !user.getMajor().equals(otherUser.getMajor()))
                 continue;
             else if (targetBoundary.equals("COLLEGE") && !user.getCollege().equals(otherUser.getCollege()))
@@ -79,12 +113,15 @@ public class MatchService {
     }
 
 
-    public Map<String, Integer> getPoolNumbers(String id, String gender, String purpose, String targetGender){
+    public Map<String, Integer> getPoolNumbers(String id, String gender, String purpose, String targetGender, int gradeLimit, int studentNumberLimit){
         Map<String, Integer> map = new HashMap<>();
 
-        ArrayList<UserDTO> allUserPool = getUsersFitConditions(userService.getUserById(id), gender, purpose, targetGender);
-        ArrayList<UserDTO> collegeUserPool = getUsersFitConditions(userService.getUserById(id), gender, purpose, targetGender, "COLLEGE");
-        ArrayList<UserDTO> majorUserPool = getUsersFitConditions(userService.getUserById(id), gender, purpose, targetGender, "MAJOR");
+        ArrayList<UserDTO> allUserPool = getUsersFitConditions(userService.getUserById(id),
+                gender, purpose, targetGender, gradeLimit, studentNumberLimit);
+        ArrayList<UserDTO> collegeUserPool = getUsersFitConditions(userService.getUserById(id),
+                gender, purpose, targetGender, gradeLimit, studentNumberLimit, "COLLEGE");
+        ArrayList<UserDTO> majorUserPool = getUsersFitConditions(userService.getUserById(id),
+                gender, purpose, targetGender, gradeLimit, studentNumberLimit, "MAJOR");
 
         map.put("major", majorUserPool.size());
         map.put("college", collegeUserPool.size());
@@ -93,15 +130,27 @@ public class MatchService {
         return map;
     }
 
-    public void match(String id, MatchDTO2 matchDTO) throws Exception{
+    static String messageFormat = "안녕하세요 %s 학우님! 세종대학교 짝선배 짝후배 매칭 서비스 'Sejong Peer'입니다.\n" +
+                                    "매칭이 완료되어 문자를 드립니다. 아래는 %s의 정보입니다.\n" +
+                                    "이름: %s 학우님\n" +
+                                    "학과: %s\n" +
+                                    "학번: %d학번\n" +
+                                    "학년: %d학년\n" +
+                                    "전화번호: %s\n" +
+                                    "저희 'Sejong Peer'를 이용해 주셔서 감사합니다." +
+                                    "문의사항은 이 번호로 남겨주시면 최대한 빠르게 답변해드리겠습니다.";
+
+    public void match(String id, MatchDTO matchDTO) throws Exception{
         UserDTO user = userService.getUserById(id);
         user.setGender(matchDTO.getGender());
         user.setPhoneNumber(matchDTO.getPhoneNumber());
         user.setPurpose(matchDTO.getPurpose());
         user.setTargetGender(matchDTO.getTargetGender());
+        user.setGradeLimit(matchDTO.getGradeLimit());
+        user.setStudentNumberLimit(matchDTO.getStudentNumberLimit());
         user.setTargetBoundary(matchDTO.getTargetBoundary());
         user.setSearchStart(LocalDateTime.now());
-        ArrayList<UserDTO> userPool = getUsersFitConditions(user, user.getGender(), user.getPurpose(), user.getTargetGender(), user.getTargetBoundary());
+        ArrayList<UserDTO> userPool = getUsersFitConditions(user, user.getGender(), user.getPurpose(), user.getTargetGender(), user.getGradeLimit(), user.getStudentNumberLimit(),  user.getTargetBoundary());
         if (userPool.size() == 0) { // 바로 불가능한 경우
             user.setFinding(true);
             user.setState("ON_GOING");
@@ -116,9 +165,14 @@ public class MatchService {
             userService.updateUser(partner.getId(), partner);
             userService.updateUser(id, user);
 
+            String messageToUser = String.format(messageFormat, (user.getPurpose().equals("GET_SENIOR") ? "짝선배" : "짝후배"),
+                    user.getName(), user.getMajor(), user.getStudentNumber(), user.getGrade(), user.getPhoneNumber());
+            String messageToPartner = String.format(messageFormat, (partner.getPurpose().equals("GET_SENIOR") ? "짝선배" : "짝후배"),
+                    partner.getName(), partner.getMajor(), partner.getStudentNumber(), partner.getGrade(), partner.getPhoneNumber());
+
             try {
-                smsService.sendSms(new MessageDTO(matchDTO.getPhoneNumber(), partner.getName() + "\n" + partner.getPhoneNumber()));
-                smsService.sendSms(new MessageDTO(partner.getPhoneNumber(), user.getName() + "\n" + user.getPhoneNumber()));
+                smsService.sendSms(new MessageDTO(matchDTO.getPhoneNumber(), messageToUser));
+                smsService.sendSms(new MessageDTO(partner.getPhoneNumber(), messageToPartner));
             }
             catch (Exception e){
                 throw new Exception("fail to send sms");
@@ -127,9 +181,11 @@ public class MatchService {
     }
 
 
-    public Map<String, String> getState(String id) {
-        Map<String, String> map = new HashMap<>();
+    public Map<String, Object> getUser(String id) {
+        Map<String, Object> map = new HashMap<>();
         map.put("state", userService.getUserById(id).getState());
+        map.put("grade", userService.getUserById(id).getGrade());
+        map.put("studentNumber", userService.getUserById(id).getStudentNumber());
         return map;
     }
 
@@ -137,13 +193,12 @@ public class MatchService {
         UserDTO user = userService.getUserById(id);
         UserDTO partner = userService.getUserById(user.getPartnerId());
 
-        System.out.println(user.toString());
-        System.out.println(partner.toString());
-
         user.setPartnerId(null); partner.setPartnerId(null);
         user.setState("NOT_REGISTER"); partner.setState("NOT_REGISTER");
         user.setPurpose(null); partner.setPurpose(null);
         user.setTargetGender(null); partner.setTargetGender(null);
+        user.setGradeLimit(0); partner.setGradeLimit(0);
+        user.setStudentNumberLimit(0); partner.setStudentNumberLimit(0);
         user.setTargetBoundary(null); partner.setTargetBoundary(null);
         user.setSearchStart(null); partner.setSearchStart(null);
         userService.updateUser(id, user);

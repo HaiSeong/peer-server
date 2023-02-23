@@ -1,10 +1,12 @@
-package com.nodam.server.dto.matchDTO;
+package com.nodam.server.dto;
 
-public class MatchDTO2 {
+public class MatchDTO {
     private String gender;
     private String phoneNumber;
     private String purpose;
     private String targetGender;
+    private int gradeLimit;
+    private int studentNumberLimit;
     private String targetBoundary;
 
     public String getGender() {
@@ -37,6 +39,22 @@ public class MatchDTO2 {
 
     public void setTargetGender(String targetGender) {
         this.targetGender = targetGender;
+    }
+
+    public int getGradeLimit() {
+        return gradeLimit;
+    }
+
+    public void setGradeLimit(int gradeLimit) {
+        this.gradeLimit = gradeLimit;
+    }
+
+    public int getStudentNumberLimit() {
+        return studentNumberLimit;
+    }
+
+    public void setStudentNumberLimit(int studentNumberLimit) {
+        this.studentNumberLimit = studentNumberLimit;
     }
 
     public String getTargetBoundary() {

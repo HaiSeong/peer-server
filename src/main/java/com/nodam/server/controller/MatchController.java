@@ -1,7 +1,6 @@
 package com.nodam.server.controller;
 
-import com.nodam.server.dto.matchDTO.MatchDTO2;
-import com.nodam.server.dto.matchDTO.MatchDTO;
+import com.nodam.server.dto.MatchDTO;
 import com.nodam.server.service.AuthService;
 import com.nodam.server.service.MatchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,19 +24,21 @@ public class MatchController {
             @RequestParam(value = "gender")String gender,
             @RequestParam(value = "purpose")String purpose,
             @RequestParam(value = "targetGender")String targetGender,
+            @RequestParam(value = "gradeLimit")int gradeLimit,
+            @RequestParam(value = "studentNumberLimit")int studentNumberLimit,
             HttpServletRequest request
     ) {
         try {
             String accessToken = request.getHeader("Authorization");
             String id = authService.validateAccessToken(accessToken);
-            return new ResponseEntity<>(matchService.getPoolNumbers(id, gender, purpose, targetGender), HttpStatus.OK);
+            return new ResponseEntity<>(matchService.getPoolNumbers(id, gender, purpose, targetGender, gradeLimit, studentNumberLimit), HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>("bad token", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }
 
     @PostMapping("/pool")
-    public  ResponseEntity<?> match(@RequestBody MatchDTO2 matchDTO, HttpServletRequest request){
+    public  ResponseEntity<?> match(@RequestBody MatchDTO matchDTO, HttpServletRequest request){
         try {
             String accessToken = request.getHeader("Authorization");
             String id = authService.validateAccessToken(accessToken);
@@ -53,7 +54,7 @@ public class MatchController {
         try {
             String accessToken = request.getHeader("Authorization");
             String id = authService.validateAccessToken(accessToken);
-            return new ResponseEntity<>(matchService.getState(id), HttpStatus.OK);
+            return new ResponseEntity<>(matchService.getUser(id), HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>("bad token", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
