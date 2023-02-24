@@ -60,7 +60,6 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           scp build/libs/*.jar ubuntu@haiseongworld.com:~
-        options: '-o StrictHostKeyChecking=no'
     - name: Kill Running Process
       run: ps -ef | grep "java -jar server-0.0.1-SNAPSHOT.jar" | head -n 1 | awk '{print $2}' | xargs kill
     - name: Run new jar file
