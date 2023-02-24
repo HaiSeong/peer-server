@@ -1,0 +1,24 @@
+name: Java CI with Gradle
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Build with Gradle
+      run: ./gradlew build
+    - name: Push .jar to Server
+      run: scp -i ~/.ssh/sejongpeer-server-key.pem build/libs/*.jar ubuntu@haiseongworld.com:8080/~
+    - name: Kill Running Process
+      run: ps -ef | grep "java -jar server-0.0.1-SNAPSHOT.jar" | head -n 1 | awk '{print $2}' | xargs kill
+    - name: Run new .jar
+      run: nohup java -jar server-0.0.1-SNAPSHOT.jar &
