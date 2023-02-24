@@ -16,8 +16,16 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-    - name: Push .jar to Server
-      run: scp -i ~/.ssh/sejongpeer-server-key.pem build/libs/*.jar ubuntu@haiseongworld.com:8080/~
+    - name: Copy jar file to server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SERVER_PORT }}
+        script: |
+          cd /var/www
+          scp build/libs/*.jar ubuntu@haiseongworld.com:8080/~
     - name: Kill Running Process
       run: ps -ef | grep "java -jar server-0.0.1-SNAPSHOT.jar" | head -n 1 | awk '{print $2}' | xargs kill
     - name: Run new .jar
