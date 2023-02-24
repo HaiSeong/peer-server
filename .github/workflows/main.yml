@@ -2,6 +2,9 @@ name: Java CI with Gradle
 
 on: [push, pull_request]
 
+env:
+  SSH_KNOWN_HOSTS: haiseongworld.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCdUU4MpfkY/QHSfjJxzWCx9wT9JbfdbPSOOvBzRpym4E9LHnn61no+19zOcrK0nlU2UBN4DIVZOLJiahMkMiXlMv8TOBCH+dAheTw4LE60BQOQVjrNa9utMZefc1geIFEHGgL0dJtilhCK65DWJofDgbBrqXn2BGQ87pwocsZblR+VgMi0PDsHhsF4nyXlFiqpMDWZD0GTky/WSCzG2RmEeJ+VQD/zCUkWLadUb6yOhsvPP3BXBV+ZJSB+SHUR0M4xN+AT0CdVWwJvmJNJtr/+dqJu6ozWcJNkBGOSIyfj67SeEpvBykTowe/872ph3dkJFNBKE/tdr2iclfZbDhfXPUVq80IdPCAiewdv62JQjZT/YDod/rgk2fX29T8YMhYppDGpnuA8cGQo2m4Uu/LpIJEUIdgwYNqacajsf7lgUtnDua8sbWqN+0kMvT5RW/w7ddHxw8Bk34SK19pAqBv3wLPR1C6KR6QQVdH6k/yiS4p4f3ELj5lurKFmQY0r0Ec=
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,7 +27,6 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
         script: |
-          haiseongworld.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCdUU4MpfkY/QHSfjJxzWCx9wT9JbfdbPSOOvBzRpym4E9LHnn61no+19zOcrK0nlU2UBN4DIVZOLJiahMkMiXlMv8TOBCH+dAheTw4LE60BQOQVjrNa9utMZefc1geIFEHGgL0dJtilhCK65DWJofDgbBrqXn2BGQ87pwocsZblR+VgMi0PDsHhsF4nyXlFiqpMDWZD0GTky/WSCzG2RmEeJ+VQD/zCUkWLadUb6yOhsvPP3BXBV+ZJSB+SHUR0M4xN+AT0CdVWwJvmJNJtr/+dqJu6ozWcJNkBGOSIyfj67SeEpvBykTowe/872ph3dkJFNBKE/tdr2iclfZbDhfXPUVq80IdPCAiewdv62JQjZT/YDod/rgk2fX29T8YMhYppDGpnuA8cGQo2m4Uu/LpIJEUIdgwYNqacajsf7lgUtnDua8sbWqN+0kMvT5RW/w7ddHxw8Bk34SK19pAqBv3wLPR1C6KR6QQVdH6k/yiS4p4f3ELj5lurKFmQY0r0Ec=
           scp build/libs/*.jar ubuntu@haiseongworld.com:~
     - name: Kill Running Process
       run: ps -ef | grep "java -jar server-0.0.1-SNAPSHOT.jar" | head -n 1 | awk '{print $2}' | xargs kill
