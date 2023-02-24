@@ -1,9 +1,9 @@
 package com.nodam.server;
 
-//import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
-//@SpringBootTest
-//class ServerApplicationTests {
-//
-//
-//}
+@SpringBootTest
+class ServerApplicationTests {
+
+
+}
