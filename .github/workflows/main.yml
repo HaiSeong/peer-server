@@ -23,7 +23,6 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /var/www
           scp build/libs/*.jar ubuntu@haiseongworld.com:~
     - name: Kill Running Process
       run: ps -ef | grep "java -jar server-0.0.1-SNAPSHOT.jar" | head -n 1 | awk '{print $2}' | xargs kill
