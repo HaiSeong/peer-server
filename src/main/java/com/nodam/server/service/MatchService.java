@@ -130,15 +130,8 @@ public class MatchService {
         return map;
     }
 
-    static String messageFormat = "안녕하세요 %s 학우님! 세종대학교 짝선배 짝후배 매칭 서비스 'Sejong Peer'입니다.\n" +
-                                    "매칭이 완료되어 문자를 드립니다. 아래는 %s의 정보입니다.\n" +
-                                    "이름: %s 학우님\n" +
-                                    "학과: %s\n" +
-                                    "학번: %d학번\n" +
-                                    "학년: %d학년\n" +
-                                    "전화번호: %s\n" +
-                                    "저희 'Sejong Peer'를 이용해 주셔서 감사합니다." +
-                                    "문의사항은 이 번호로 남겨주시면 최대한 빠르게 답변해드리겠습니다.";
+    static String messageFormat1 = "안녕하세요 %s 학우님,  'Sejong Peer'입니다. %s 매칭이 완료되었습니다!";
+    static String messageFormat2 = "%s (%s/%d학번/%d학년/%s)";
 
     public void match(String id, MatchDTO matchDTO) throws Exception{
         UserDTO user = userService.getUserById(id);
@@ -165,14 +158,17 @@ public class MatchService {
             userService.updateUser(partner.getId(), partner);
             userService.updateUser(id, user);
 
-            String messageToUser = String.format(messageFormat, (user.getPurpose().equals("GET_SENIOR") ? "짝선배" : "짝후배"),
-                    user.getName(), user.getMajor(), user.getStudentNumber(), user.getGrade(), user.getPhoneNumber());
-            String messageToPartner = String.format(messageFormat, (partner.getPurpose().equals("GET_SENIOR") ? "짝선배" : "짝후배"),
-                    partner.getName(), partner.getMajor(), partner.getStudentNumber(), partner.getGrade(), partner.getPhoneNumber());
-
             try {
-                smsService.sendSms(new MessageDTO(matchDTO.getPhoneNumber(), messageToUser));
-                smsService.sendSms(new MessageDTO(partner.getPhoneNumber(), messageToPartner));
+                String messageToUser1 = String.format(messageFormat1, user.getName(), user.getPurpose().equals("GET_SENIOR") ? "짝선배" : "짝후배");
+                String messageToPartner1 = String.format(messageFormat1, partner.getName(), partner.getPurpose().equals("GET_SENIOR") ? "짝선배" : "짝후배");
+
+                String messageToUser2 = String.format(messageFormat2, partner.getName(), partner.getMajor(), partner.getStudentNumber(), partner.getGrade(), partner.getPhoneNumber());
+                String messageToPartner2 = String.format(messageFormat2, user.getName(), user.getMajor(), user.getStudentNumber(), user.getGrade(), user.getPhoneNumber());
+
+                smsService.sendSms(new MessageDTO(matchDTO.getPhoneNumber(), messageToUser1));
+                smsService.sendSms(new MessageDTO(partner.getPhoneNumber(), messageToPartner1));
+                smsService.sendSms(new MessageDTO(matchDTO.getPhoneNumber(), messageToUser2));
+                smsService.sendSms(new MessageDTO(partner.getPhoneNumber(), messageToPartner2));
             }
             catch (Exception e){
                 throw new Exception("fail to send sms");
