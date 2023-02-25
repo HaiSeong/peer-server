@@ -131,7 +131,7 @@ public class MatchService {
     }
 
     static String messageFormat1 = "안녕하세요 %s 학우님,  'Sejong Peer'입니다. %s 매칭이 완료되었습니다!";
-    static String messageFormat2 = "%s (%s/%d학번/%d학년/%s)";
+    static String messageFormat2 = "%s (%s/%d학번/%d학년)\n%s";
 
     public void match(String id, MatchDTO matchDTO) throws Exception{
         UserDTO user = userService.getUserById(id);
@@ -162,7 +162,7 @@ public class MatchService {
                 String messageToUser1 = String.format(messageFormat1, user.getName(), user.getPurpose().equals("GET_SENIOR") ? "짝선배" : "짝후배");
                 String messageToPartner1 = String.format(messageFormat1, partner.getName(), partner.getPurpose().equals("GET_SENIOR") ? "짝선배" : "짝후배");
 
-                String messageToUser2 = String.format(messageFormat2, partner.getName(), partner.getMajor(), partner.getStudentNumber(), partner.getGrade(), user.getGrade(), partner.getPhoneNumber().substring(0, 3) + '-' + partner.getPhoneNumber().substring(3, 7) + '-' + partner.getPhoneNumber().substring(7));
+                String messageToUser2 = String.format(messageFormat2, partner.getName(), partner.getMajor(), partner.getStudentNumber(), partner.getGrade(), partner.getPhoneNumber().substring(0, 3) + '-' + partner.getPhoneNumber().substring(3, 7) + '-' + partner.getPhoneNumber().substring(7));
                 String messageToPartner2 = String.format(messageFormat2, user.getName(), user.getMajor(), user.getStudentNumber(), user.getGrade(), user.getPhoneNumber().substring(0, 3) + '-' + user.getPhoneNumber().substring(3, 7) + '-' + user.getPhoneNumber().substring(7));
 
                 smsService.sendSms(new MessageDTO(matchDTO.getPhoneNumber(), messageToUser1));
