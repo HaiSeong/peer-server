@@ -162,8 +162,8 @@ public class MatchService {
                 String messageToUser1 = String.format(messageFormat1, user.getName(), user.getPurpose().equals("GET_SENIOR") ? "짝선배" : "짝후배");
                 String messageToPartner1 = String.format(messageFormat1, partner.getName(), partner.getPurpose().equals("GET_SENIOR") ? "짝선배" : "짝후배");
 
-                String messageToUser2 = String.format(messageFormat2, partner.getName(), partner.getMajor(), partner.getStudentNumber(), partner.getGrade(), partner.getPhoneNumber());
-                String messageToPartner2 = String.format(messageFormat2, user.getName(), user.getMajor(), user.getStudentNumber(), user.getGrade(), user.getPhoneNumber());
+                String messageToUser2 = String.format(messageFormat2, partner.getName(), partner.getMajor(), partner.getStudentNumber(), partner.getGrade(), user.getGrade(), partner.getPhoneNumber().substring(0, 3) + '-' + partner.getPhoneNumber().substring(3, 7) + '-' + partner.getPhoneNumber().substring(7));
+                String messageToPartner2 = String.format(messageFormat2, user.getName(), user.getMajor(), user.getStudentNumber(), user.getGrade(), user.getPhoneNumber().substring(0, 3) + '-' + user.getPhoneNumber().substring(3, 7) + '-' + user.getPhoneNumber().substring(7));
 
                 smsService.sendSms(new MessageDTO(matchDTO.getPhoneNumber(), messageToUser1));
                 smsService.sendSms(new MessageDTO(partner.getPhoneNumber(), messageToPartner1));
