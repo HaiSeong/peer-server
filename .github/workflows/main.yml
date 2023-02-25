@@ -59,7 +59,9 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          scp build/libs/*.jar ubuntu@haiseongworld.com:~
+          echo ${{ secrets.SSH_PRIVATE_KEY }} > .key.pem
+          scp -i .key.pem build/libs/*.jar ubuntu@haiseongworld.com:~
+          rm -rf .key.pem
     - name: Kill Running Process
       run: ps -ef | grep "java -jar server-0.0.1-SNAPSHOT.jar" | head -n 1 | awk '{print $2}' | xargs kill
     - name: Run new jar file

@@ -2,7 +2,6 @@ package com.nodam.server.repository;
 
 import com.nodam.server.dto.UserDTO;
 import com.nodam.server.mapper.UserDTOMapper;
-import com.nodam.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

@@ -43,7 +43,6 @@ public class AuthService {
         if (!userService.isUser(loginDTO.getId())) {
             UserDTO userDTO = new UserDTO();
             userDTO.setId(loginDTO.getId());
-            userDTO.setPassword(loginDTO.getPw());
             userDTO.setStudentNumber(Integer.parseInt(loginDTO.getId().substring(0,2)));
             Map body = (Map) result.get("body");
             userDTO.setName((String) body.get("name"));

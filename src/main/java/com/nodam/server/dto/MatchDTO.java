@@ -9,6 +9,16 @@ public class MatchDTO {
     private int studentNumberLimit;
     private String targetBoundary;
 
+    public MatchDTO(String gender, String phoneNumber, String purpose, String targetGender, int gradeLimit, int studentNumberLimit, String targetBoundary) {
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
+        this.purpose = purpose;
+        this.targetGender = targetGender;
+        this.gradeLimit = gradeLimit;
+        this.studentNumberLimit = studentNumberLimit;
+        this.targetBoundary = targetBoundary;
+    }
+
     public String getGender() {
         return gender;
     }

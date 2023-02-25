@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 public class UserDTO {
     private String id;
-    private String password;
     private String name;
     private String major;
     private String college;
@@ -24,7 +23,6 @@ public class UserDTO {
 
     public UserDTO() {
         this.id = "";
-        this.password = "";
         this.name = "";
         this.major = "";
         this.studentNumber = 0;
@@ -47,14 +45,6 @@ public class UserDTO {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getName() {
@@ -182,7 +172,6 @@ public class UserDTO {
     public String toString() {
         return "UserDTO{" +
                 "id='" + id + '\'' +
-                ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", major='" + major + '\'' +
                 ", college='" + college + '\'' +

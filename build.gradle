@@ -28,6 +28,7 @@ dependencies {
 	implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.14'
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+	testImplementation 'junit:junit:4.13.1'
 }
 
 tasks.named('test') {

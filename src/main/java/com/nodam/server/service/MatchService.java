@@ -191,17 +191,27 @@ public class MatchService {
 
     public void breakRelationship(String id){
         UserDTO user = userService.getUserById(id);
-        UserDTO partner = userService.getUserById(user.getPartnerId());
-
-        user.setPartnerId(null); partner.setPartnerId(null);
-        user.setState("NOT_REGISTER"); partner.setState("NOT_REGISTER");
-        user.setPurpose(null); partner.setPurpose(null);
-        user.setTargetGender(null); partner.setTargetGender(null);
-        user.setGradeLimit(0); partner.setGradeLimit(0);
-        user.setStudentNumberLimit(0); partner.setStudentNumberLimit(0);
-        user.setTargetBoundary(null); partner.setTargetBoundary(null);
-        user.setSearchStart(null); partner.setSearchStart(null);
+        if (user.getPartnerId() != null){
+            UserDTO partner = userService.getUserById(user.getPartnerId());
+            partner.setPartnerId(null);
+            partner.setState("NOT_REGISTER");
+            partner.setPurpose(null);
+            partner.setTargetGender(null);
+            partner.setGradeLimit(0);
+            partner.setStudentNumberLimit(0);
+            partner.setTargetBoundary(null);
+            partner.setSearchStart(null);
+            userService.updateUser(partner.getId(), partner);
+        }
+        user.setPartnerId(null);
+        user.setState("NOT_REGISTER");
+        user.setPurpose(null);
+        user.setTargetGender(null);
+        user.setGradeLimit(0);
+        user.setStudentNumberLimit(0);
+        user.setTargetBoundary(null);
+        user.setSearchStart(null);
         userService.updateUser(id, user);
-        userService.updateUser(partner.getId(), partner);
+
     }
 }
