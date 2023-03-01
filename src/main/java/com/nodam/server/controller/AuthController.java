@@ -2,6 +2,8 @@ package com.nodam.server.controller;
 
 import com.nodam.server.dto.LoginDTO;
 import com.nodam.server.service.AuthService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -14,6 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Value("${client.domain}")
     private String clientDomain;
@@ -22,7 +25,8 @@ public class AuthController {
     AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
+        logger.info("/login " + loginDTO.getId());
         try {
             String refreshToken = authService.createRefreshToken(loginDTO);
             String accessToken = authService.createAccessToken(refreshToken);
@@ -36,14 +40,17 @@ public class AuthController {
 
             Map<String, String> map = new HashMap<>();
             map.put("accessToken", accessToken);
+            logger.info("/login " + loginDTO.getId() + " success");
             return new ResponseEntity<>(map, HttpStatus.OK);
         } catch (Exception e) {
+            logger.info("/login " + loginDTO.getId() + " failed");
             return new ResponseEntity<>("login failed", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response) {
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        logger.info(request.toString());
         response.setHeader("Set-Cookie",
                 "refreshToken=" + ";" +
                         " Path=/; " +
@@ -55,8 +62,9 @@ public class AuthController {
     }
 
 
-    @GetMapping("/refresh")
+    @PostMapping("/refresh")
     public ResponseEntity<?> refresh(HttpServletRequest request) {
+        logger.info(request.toString());
         return authService.refresh(request);
     }
 }

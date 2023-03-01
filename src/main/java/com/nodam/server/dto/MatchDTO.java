@@ -77,10 +77,13 @@ public class MatchDTO {
 
     @Override
     public String toString() {
-        return "AppendPoolDTO{" +
-                "phoneNumber='" + phoneNumber + '\'' +
+        return "MatchDTO{" +
+                "gender='" + gender + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 ", purpose='" + purpose + '\'' +
                 ", targetGender='" + targetGender + '\'' +
+                ", gradeLimit=" + gradeLimit +
+                ", studentNumberLimit=" + studentNumberLimit +
                 ", targetBoundary='" + targetBoundary + '\'' +
                 '}';
     }

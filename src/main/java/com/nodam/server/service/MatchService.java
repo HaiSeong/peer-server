@@ -97,11 +97,11 @@ public class MatchService {
                 continue;
 
             // check targetBoundary
-            if (targetBoundary.equals("MAJOR") && !user.getMajor().equals(otherUser.getMajor()))
+            if (targetBoundary.equals("MAJOR") && !(user.getMajor().equals(otherUser.getMajor())  || user.getMajor().startsWith(otherUser.getMajor().substring(0, otherUser.getMajor().length() - 1)) || otherUser.getMajor().startsWith(user.getMajor().substring(0, user.getMajor().length() - 1))))
                 continue;
             else if (targetBoundary.equals("COLLEGE") && !user.getCollege().equals(otherUser.getCollege()))
                 continue;
-            if (otherUser.getTargetBoundary().equals("MAJOR") && !user.getMajor().equals(otherUser.getMajor()))
+            if (otherUser.getTargetBoundary().equals("MAJOR") && !(user.getMajor().equals(otherUser.getMajor()) || user.getMajor().startsWith(otherUser.getMajor().substring(0, otherUser.getMajor().length() - 1)) || otherUser.getMajor().startsWith(user.getMajor().substring(0, user.getMajor().length() - 1))))
                 continue;
             else if (otherUser.getTargetBoundary().equals("COLLEGE") && !user.getCollege().equals(otherUser.getCollege()))
                 continue;
@@ -177,18 +177,20 @@ public class MatchService {
     }
 
 
-    public Map<String, Object> getUser(String id) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("state", userService.getUserById(id).getState());
-        map.put("grade", userService.getUserById(id).getGrade());
-        map.put("studentNumber", userService.getUserById(id).getStudentNumber());
-        return map;
+    public UserDTO getUser(String id) {
+
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("state", userService.getUserById(id).getState());
+//        map.put("grade", userService.getUserById(id).getGrade());
+//        map.put("studentNumber", userService.getUserById(id).getStudentNumber());
+        return userService.getUserById(id);
     }
 
     public void breakRelationship(String id){
         UserDTO user = userService.getUserById(id);
         if (user.getPartnerId() != null){
             UserDTO partner = userService.getUserById(user.getPartnerId());
+            partner.setFinding(false);
             partner.setPartnerId(null);
             partner.setState("NOT_REGISTER");
             partner.setPurpose(null);
@@ -199,6 +201,7 @@ public class MatchService {
             partner.setSearchStart(null);
             userService.updateUser(partner.getId(), partner);
         }
+        user.setFinding(false);
         user.setPartnerId(null);
         user.setState("NOT_REGISTER");
         user.setPurpose(null);
