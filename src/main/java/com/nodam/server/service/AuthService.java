@@ -1,8 +1,11 @@
 package com.nodam.server.service;
 
+import com.nodam.server.controller.AuthController;
 import com.nodam.server.dto.LoginDTO;
 import com.nodam.server.dto.UserDTO;
 import com.nodam.server.security.SecurityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,7 @@ import java.util.Map;
 
 @Service
 public class AuthService {
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     @Autowired
     UserService userService;
 
@@ -38,17 +42,26 @@ public class AuthService {
 
         Map result = (Map) sejongResponse.get("result");
         boolean isAuth = (boolean) result.get("is_auth");
+        logger.info("result " + isAuth);
         if (!isAuth)
             throw new RuntimeException("login failed");
         if (!userService.isUser(loginDTO.getId())) {
             UserDTO userDTO = new UserDTO();
             userDTO.setId(loginDTO.getId());
+            logger.info("id " + loginDTO.getId());
             userDTO.setStudentNumber(Integer.parseInt(loginDTO.getId().substring(0,2)));
+            logger.info("setStudentNumber " + Integer.parseInt(loginDTO.getId().substring(0,2)));
             Map body = (Map) result.get("body");
             userDTO.setName((String) body.get("name"));
+            logger.info("name " + (String) body.get("name"));
             userDTO.setMajor((String) body.get("major"));
+            logger.info("major " + (String) body.get("major"));
             userDTO.setCollege(majorCollegeMap.getCollege((String) body.get("major")));
+            if (userDTO.getCollege() == null)
+                userDTO.setCollege("알수없음");
+            logger.info("majorCollege " + userDTO.getCollege());
             userDTO.setGrade(Integer.valueOf((String) body.get("grade")));
+            logger.info("grade " + (String) body.get("grade"));
             userService.insertUser(userDTO);
         }
 

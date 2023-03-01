@@ -73,6 +73,7 @@ public class MatchController {
             String accessToken = request.getHeader("Authorization");
             String id = authService.validateAccessToken(accessToken);
             matchService.breakRelationship(id);
+            logger.info("/break " + id);
             return new ResponseEntity<>("break", HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>("bad token", HttpStatus.NON_AUTHORITATIVE_INFORMATION);

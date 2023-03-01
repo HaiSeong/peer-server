@@ -1,11 +1,19 @@
 package com.nodam.server.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.nodam.server.controller.AuthController;
 import com.nodam.server.dto.UserDTO;
 import com.nodam.server.dto.MatchDTO;
 import com.nodam.server.dto.smsDTO.MessageDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +22,8 @@ import java.util.Map;
 
 @Service
 public class MatchService {
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
     @Autowired
     UserService userService;
 
@@ -158,6 +168,8 @@ public class MatchService {
             userService.updateUser(partner.getId(), partner);
             userService.updateUser(id, user);
 
+            logger.info("매치가 성사됨 ",user.getName() + " " + user.getId() + " " + partner.getName() + " " + partner.getId());
+
             try {
                 String messageToUser1 = String.format(messageFormat1, user.getName(), user.getPurpose().equals("GET_SENIOR") ? "짝선배" : "짝후배");
                 String messageToPartner1 = String.format(messageFormat1, partner.getName(), partner.getPurpose().equals("GET_SENIOR") ? "짝선배" : "짝후배");
@@ -178,18 +190,19 @@ public class MatchService {
 
 
     public UserDTO getUser(String id) {
-
-//        Map<String, Object> map = new HashMap<>();
-//        map.put("state", userService.getUserById(id).getState());
-//        map.put("grade", userService.getUserById(id).getGrade());
-//        map.put("studentNumber", userService.getUserById(id).getStudentNumber());
         return userService.getUserById(id);
     }
 
+    static String messageFormat3 = "상대방이 관계를 끊었습니다.";
     public void breakRelationship(String id){
         UserDTO user = userService.getUserById(id);
         if (user.getPartnerId() != null){
             UserDTO partner = userService.getUserById(user.getPartnerId());
+            try {
+                smsService.sendSms(new MessageDTO(partner.getPhoneNumber(), "상대방이 관계를 끊었습니다."));
+            } catch (Exception e) {
+                logger.info("break sms fail " + id);
+            }
             partner.setFinding(false);
             partner.setPartnerId(null);
             partner.setState("NOT_REGISTER");
@@ -200,6 +213,7 @@ public class MatchService {
             partner.setTargetBoundary(null);
             partner.setSearchStart(null);
             userService.updateUser(partner.getId(), partner);
+            logger.info("/break cancle match " + id);
         }
         user.setFinding(false);
         user.setPartnerId(null);
