@@ -26,7 +26,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
-        logger.info("/login " + loginDTO.getId());
+        logger.info("POST /login " + loginDTO.getId());
         try {
             String refreshToken = authService.createRefreshToken(loginDTO);
             String accessToken = authService.createAccessToken(refreshToken);
@@ -40,17 +40,16 @@ public class AuthController {
 
             Map<String, String> map = new HashMap<>();
             map.put("accessToken", accessToken);
-            logger.info("/login " + loginDTO.getId() + " success");
+            logger.info("POST /login " + loginDTO.getId() + " success");
             return new ResponseEntity<>(map, HttpStatus.OK);
         } catch (Exception e) {
-            logger.info("/login " + loginDTO.getId() + " failed");
-            return new ResponseEntity<>("login failed", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+            logger.info("POST /login " + loginDTO.getId() + " failed \n" + e.getMessage());
+            return new ResponseEntity<>("login failed\n", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }
 
     @GetMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
-        logger.info(request.toString());
         response.setHeader("Set-Cookie",
                 "refreshToken=" + ";" +
                         " Path=/; " +
@@ -64,7 +63,6 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(HttpServletRequest request) {
-        logger.info(request.toString());
         return authService.refresh(request);
     }
 }

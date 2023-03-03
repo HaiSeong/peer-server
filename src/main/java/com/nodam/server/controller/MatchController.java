@@ -35,8 +35,10 @@ public class MatchController {
         try {
             String accessToken = request.getHeader("Authorization");
             String id = authService.validateAccessToken(accessToken);
+            logger.info("GET /pool " + id);
             return new ResponseEntity<>(matchService.getPoolNumbers(id, gender, purpose, targetGender, gradeLimit, studentNumberLimit), HttpStatus.OK);
         } catch (Exception e){
+            logger.info("GET /pool failed " + e.getMessage());
             return new ResponseEntity<>("bad token", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }
@@ -46,12 +48,12 @@ public class MatchController {
         try {
             String accessToken = request.getHeader("Authorization");
             String id = authService.validateAccessToken(accessToken);
-            logger.info("/pool " + id + " " + matchDTO.toString());
+            logger.info("POST /pool " + id + " " + matchDTO.toString());
             matchService.match(id, matchDTO);
-            logger.info("/pool " + id + " success");
+            logger.info("POST /pool " + id + " success");
             return new ResponseEntity<>("matching", HttpStatus.OK);
         }catch (Exception e){
-            logger.info("/pool " + "fail");
+            logger.info("POST /pool " + "failed" + e.getMessage());
             return new ResponseEntity<>("bad token", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }
@@ -72,10 +74,12 @@ public class MatchController {
         try {
             String accessToken = request.getHeader("Authorization");
             String id = authService.validateAccessToken(accessToken);
+            logger.info("POST /break " + id);
             matchService.breakRelationship(id);
-            logger.info("/break " + id);
+            logger.info("POST /break " + id + " success");
             return new ResponseEntity<>("break", HttpStatus.OK);
         }catch (Exception e){
+            logger.info("POST /break " + "failed " + e.getMessage());
             return new ResponseEntity<>("bad token", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 @Mapper
 public interface UserDTOMapper {
 
-        @Insert("INSERT INTO `nodam_db`.`UserDTO` (`id`, `name`, `major`, `college`, `studentNumber`, `grade`, `finding`, `state`, `yellowCard`) VALUES (#{id}, #{name}, #{major}, #{college}, #{studentNumber}, #{grade}, #{finding}, #{state}), #{yellowCard})")
+        @Insert("INSERT INTO `nodam_db`.`UserDTO` (`id`, `name`, `major`, `college`, `studentNumber`, `grade`, `finding`, `state`, `yellowCard`) VALUES (#{id}, #{name}, #{major}, #{college}, #{studentNumber}, #{grade}, #{finding}, #{state}, #{yellowCard})")
         public int insertUser(@RequestBody UserDTO user);
 
         @Select("SELECT * FROM UserDTO;")

@@ -30,6 +30,10 @@ public class MatchService {
     @Autowired
     SmsService smsService;
 
+    private boolean isSameMajor(String major1, String major2) {
+        return true;
+    }
+
     public ArrayList<UserDTO> getUsersFitConditions(UserDTO user, String gender, String purpose, String targetGender, int gradeLimit, int studentNumberLimit){
         ArrayList<UserDTO> findingUsers = userService.getFindingUsers();
         ArrayList<UserDTO> matchedList = new ArrayList<>();
@@ -137,11 +141,13 @@ public class MatchService {
         map.put("college", collegeUserPool.size());
         map.put("all", allUserPool.size());
 
+        logger.info("getPoolNumbers " + id + " major : " + map.get("major") + " college : " + map.get("college") + " all : " + map.get("all"));
+
         return map;
     }
 
     static String messageFormat1 = "안녕하세요 %s 학우님, 'Sejong Peer'입니다. %s 매칭이 완료되었습니다!";
-    static String messageFormat2 = "%s (%s/%d학번/%d학년)\n%s";
+    static String messageFormat2 = "%s님의 kakao id\n%s";
 
     public void match(String id, MatchDTO matchDTO) throws Exception{
         UserDTO user = userService.getUserById(id);
@@ -154,11 +160,13 @@ public class MatchService {
         user.setStudentNumberLimit(matchDTO.getStudentNumberLimit());
         user.setTargetBoundary(matchDTO.getTargetBoundary());
         user.setSearchStart(LocalDateTime.now());
+        logger.info("match user : " + id + " " + matchDTO);
         ArrayList<UserDTO> userPool = getUsersFitConditions(user, user.getGender(), user.getPurpose(), user.getTargetGender(), user.getGradeLimit(), user.getStudentNumberLimit(),  user.getTargetBoundary());
         if (userPool.size() == 0) { // 바로 불가능한 경우
             user.setFinding(true);
             user.setState("ON_GOING");
             userService.updateUser(id, user);
+            logger.info("match " + id + " goes waiting list");
         }
         else { // 바로 가능한 경우
             UserDTO partner = userPool.get(0);
@@ -170,14 +178,16 @@ public class MatchService {
             userService.updateUser(partner.getId(), partner);
             userService.updateUser(id, user);
 
-            logger.info("매치가 성사됨 ",user.getName() + " " + user.getId() + " " + partner.getName() + " " + partner.getId());
+            logger.info("match couple matched " + user.getName() + " " + user.getId() + " " + partner.getName() + " " + partner.getId());
+            logger.info("match user1 : " + user.toStringShort());
+            logger.info("match user2 : " + partner.toStringShort());
 
             try {
                 String messageToUser1 = String.format(messageFormat1, user.getName(), user.getPurpose().equals("GET_SENIOR") ? "짝선배" : "짝후배");
                 String messageToPartner1 = String.format(messageFormat1, partner.getName(), partner.getPurpose().equals("GET_SENIOR") ? "짝선배" : "짝후배");
 
-                String messageToUser2 = String.format(messageFormat2, partner.getName(), partner.getMajor(), partner.getStudentNumber(), partner.getGrade(), partner.getPhoneNumber().substring(0, 3) + '-' + partner.getPhoneNumber().substring(3, 7) + '-' + partner.getPhoneNumber().substring(7));
-                String messageToPartner2 = String.format(messageFormat2, user.getName(), user.getMajor(), user.getStudentNumber(), user.getGrade(), user.getPhoneNumber().substring(0, 3) + '-' + user.getPhoneNumber().substring(3, 7) + '-' + user.getPhoneNumber().substring(7));
+                String messageToUser2 = String.format(messageFormat2, partner.getName(), partner.getKakaoId());
+                String messageToPartner2 = String.format(messageFormat2, user.getName(), user.getKakaoId());
 
                 smsService.sendSms(new MessageDTO(matchDTO.getPhoneNumber(), messageToUser1));
                 smsService.sendSms(new MessageDTO(partner.getPhoneNumber(), messageToPartner1));
@@ -185,6 +195,7 @@ public class MatchService {
                 smsService.sendSms(new MessageDTO(partner.getPhoneNumber(), messageToPartner2));
             }
             catch (Exception e){
+                logger.info("match fail to send sms " + user.getId() + " and " + partner.getId());
                 throw new Exception("fail to send sms");
             }
         }
@@ -192,18 +203,65 @@ public class MatchService {
 
 
     public UserDTO getUser(String id) {
-        return userService.getUserById(id);
+        UserDTO user = userService.getUserById(id);
+        if (user.getState().equals("BLOCKED")){
+            if (LocalDateTime.now().isAfter(user.getUnblockTime()))
+                user.setState("NOT_REGISTERED");
+        }
+        return user;
     }
 
     static String messageFormat3 = "상대방이 관계를 끊었습니다.";
+    static String messageFormat4 = "상대방이 관계를 끊었습니다. 상대방은 경고 누적으로 일시정지 되었습니다.";
     public void breakRelationship(String id){
         UserDTO user = userService.getUserById(id);
+        logger.info("breakRelationship " + user.getId());
         if (user.getPartnerId() != null){
             UserDTO partner = userService.getUserById(user.getPartnerId());
+
+
+            if (LocalDateTime.now().isBefore(user.getMatchedTime().plusMinutes(15))) {
+                user.setYellowCard(user.getYellowCard() + 3);
+                logger.info("breakRelationship " + user.getId() + " got 3 yellow");
+            }
+            else if (LocalDateTime.now().isBefore(user.getMatchedTime().plusHours(1))) {
+                user.setYellowCard(user.getYellowCard() + 2);
+                logger.info("breakRelationship " + user.getId() + " got 2 yellow");
+            }
+            else if (LocalDateTime.now().isBefore(user.getMatchedTime().plusHours(24))) {
+                user.setYellowCard(user.getYellowCard() + 1);
+                logger.info("breakRelationship " + user.getId() + " got 1 yellow");
+            }
+
+            if (user.getYellowCard() > 7){
+                user.setState("BLOCKED");
+                user.setUnblockTime(LocalDateTime.now().minusMonths(4));
+            }
+            else if (user.getYellowCard() > 5){
+                user.setState("BLOCKED");
+                user.setUnblockTime(LocalDateTime.now().plusMonths(1));
+            }
+            else if (user.getYellowCard() > 3){
+                user.setState("BLOCKED");
+                user.setUnblockTime(LocalDateTime.now().plusWeeks(1));
+            }
+            else if (user.getYellowCard() > 1){
+                user.setState("BLOCKED");
+                user.setUnblockTime(LocalDateTime.now().plusDays(1));
+            }
+            else {
+                user.setState("NOT_REGISTER");
+            }
+
             try {
-                smsService.sendSms(new MessageDTO(partner.getPhoneNumber(), "상대방이 관계를 끊었습니다."));
+                if (user.getState().equals("BLOCKED")) {
+                    logger.info("breakRelationship block " + user.getId() + " until " + user.getUnblockTime());
+                    smsService.sendSms(new MessageDTO(partner.getPhoneNumber(), messageFormat4));
+                }
+                else
+                    smsService.sendSms(new MessageDTO(partner.getPhoneNumber(), messageFormat3));
             } catch (Exception e) {
-                logger.info("break sms fail " + id);
+                logger.info("breakRelationship sms fail " + partner.getId());
             }
             partner.setFinding(false);
             partner.setPartnerId(null);
@@ -217,31 +275,6 @@ public class MatchService {
             partner.setMatchedTime(null);
             partner.setKakaoId(null);
             userService.updateUser(partner.getId(), partner);
-            logger.info("/break cancle match " + id);
-        }
-
-        if (LocalDateTime.now().isBefore(user.getMatchedTime().plusMinutes(15)))
-            user.setYellowCard(user.getYellowCard() + 3);
-        else if (LocalDateTime.now().isBefore(user.getMatchedTime().plusHours(1)))
-            user.setYellowCard(user.getYellowCard() + 2);
-        else if (LocalDateTime.now().isBefore(user.getMatchedTime().plusHours(24)))
-            user.setYellowCard(user.getYellowCard() + 1);
-
-        if (user.getYellowCard() > 7){
-            user.setState("Blocked");
-            user.setUnblockTime(LocalDateTime.now().minusMonths(4));
-        }
-        else if (user.getYellowCard() > 5){
-            user.setState("Blocked");
-            user.setUnblockTime(LocalDateTime.now().plusMonths(1));
-        }
-        else if (user.getYellowCard() > 3){
-            user.setState("Blocked");
-            user.setUnblockTime(LocalDateTime.now().plusWeeks(1));
-        }
-        else if (user.getYellowCard() > 1){
-            user.setState("Blocked");
-            user.setUnblockTime(LocalDateTime.now().plusDays(1));
         }
         else {
             user.setState("NOT_REGISTER");

@@ -215,14 +215,35 @@ public class UserDTO {
                 ", studentNumber=" + studentNumber +
                 ", grade=" + grade +
                 ", finding=" + finding +
-                ", status='" + state + '\'' +
+                ", state='" + state + '\'' +
                 ", gender='" + gender + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
+                ", kakaoId='" + kakaoId + '\'' +
                 ", purpose='" + purpose + '\'' +
                 ", targetGender='" + targetGender + '\'' +
                 ", targetBoundary='" + targetBoundary + '\'' +
+                ", gradeLimit=" + gradeLimit +
+                ", studentNumberLimit=" + studentNumberLimit +
                 ", searchStart=" + searchStart +
                 ", partnerId='" + partnerId + '\'' +
+                ", yellowCard=" + yellowCard +
+                ", matchedTime=" + matchedTime +
+                ", unblockTime=" + unblockTime +
+                '}';
+    }
+
+    public String toStringShort() {
+        return "UserDTO{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", major='" + major + '\'' +
+                ", college='" + college + '\'' +
+                ", gender='" + gender + '\'' +
+                ", purpose='" + purpose + '\'' +
+                ", targetGender='" + targetGender + '\'' +
+                ", targetBoundary='" + targetBoundary + '\'' +
+                ", gradeLimit=" + gradeLimit +
+                ", studentNumberLimit=" + studentNumberLimit +
                 '}';
     }
 }

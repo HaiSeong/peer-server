@@ -10,9 +10,10 @@ public class MatchDTO {
     private int studentNumberLimit;
     private String targetBoundary;
 
-    public MatchDTO(String gender, String phoneNumber, String purpose, String targetGender, int gradeLimit, int studentNumberLimit, String targetBoundary) {
+    public MatchDTO(String gender, String phoneNumber, String kakaoId, String purpose, String targetGender, int gradeLimit, int studentNumberLimit, String targetBoundary) {
         this.gender = gender;
         this.phoneNumber = phoneNumber;
+        this.kakaoId = kakaoId;
         this.purpose = purpose;
         this.targetGender = targetGender;
         this.gradeLimit = gradeLimit;
