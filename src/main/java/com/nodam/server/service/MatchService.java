@@ -140,13 +140,14 @@ public class MatchService {
         return map;
     }
 
-    static String messageFormat1 = "안녕하세요 %s 학우님,  'Sejong Peer'입니다. %s 매칭이 완료되었습니다!";
+    static String messageFormat1 = "안녕하세요 %s 학우님, 'Sejong Peer'입니다. %s 매칭이 완료되었습니다!";
     static String messageFormat2 = "%s (%s/%d학번/%d학년)\n%s";
 
     public void match(String id, MatchDTO matchDTO) throws Exception{
         UserDTO user = userService.getUserById(id);
         user.setGender(matchDTO.getGender());
         user.setPhoneNumber(matchDTO.getPhoneNumber());
+        user.setKakaoId(matchDTO.getKakaoId());
         user.setPurpose(matchDTO.getPurpose());
         user.setTargetGender(matchDTO.getTargetGender());
         user.setGradeLimit(matchDTO.getGradeLimit());
@@ -164,6 +165,7 @@ public class MatchService {
             user.setFinding(false); partner.setFinding(false);
             user.setState("DONE"); partner.setState("DONE");
             user.setPartnerId(partner.getId()); partner.setPartnerId(user.getId());
+            user.setMatchedTime(LocalDateTime.now()); partner.setMatchedTime(LocalDateTime.now());
 
             userService.updateUser(partner.getId(), partner);
             userService.updateUser(id, user);
@@ -212,18 +214,50 @@ public class MatchService {
             partner.setStudentNumberLimit(0);
             partner.setTargetBoundary(null);
             partner.setSearchStart(null);
+            partner.setMatchedTime(null);
+            partner.setKakaoId(null);
             userService.updateUser(partner.getId(), partner);
             logger.info("/break cancle match " + id);
         }
+
+        if (LocalDateTime.now().isBefore(user.getMatchedTime().plusMinutes(15)))
+            user.setYellowCard(user.getYellowCard() + 3);
+        else if (LocalDateTime.now().isBefore(user.getMatchedTime().plusHours(1)))
+            user.setYellowCard(user.getYellowCard() + 2);
+        else if (LocalDateTime.now().isBefore(user.getMatchedTime().plusHours(24)))
+            user.setYellowCard(user.getYellowCard() + 1);
+
+        if (user.getYellowCard() > 7){
+            user.setState("Blocked");
+            user.setUnblockTime(LocalDateTime.now().minusMonths(4));
+        }
+        else if (user.getYellowCard() > 5){
+            user.setState("Blocked");
+            user.setUnblockTime(LocalDateTime.now().plusMonths(1));
+        }
+        else if (user.getYellowCard() > 3){
+            user.setState("Blocked");
+            user.setUnblockTime(LocalDateTime.now().plusWeeks(1));
+        }
+        else if (user.getYellowCard() > 1){
+            user.setState("Blocked");
+            user.setUnblockTime(LocalDateTime.now().plusDays(1));
+        }
+        else {
+            user.setState("NOT_REGISTER");
+        }
+
         user.setFinding(false);
         user.setPartnerId(null);
-        user.setState("NOT_REGISTER");
         user.setPurpose(null);
         user.setTargetGender(null);
         user.setGradeLimit(0);
         user.setStudentNumberLimit(0);
         user.setTargetBoundary(null);
         user.setSearchStart(null);
+        user.setMatchedTime(null);
+        user.setKakaoId(null);
+
         userService.updateUser(id, user);
 
     }

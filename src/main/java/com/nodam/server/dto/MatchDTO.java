@@ -3,6 +3,7 @@ package com.nodam.server.dto;
 public class MatchDTO {
     private String gender;
     private String phoneNumber;
+    private String kakaoId;
     private String purpose;
     private String targetGender;
     private int gradeLimit;
@@ -17,6 +18,14 @@ public class MatchDTO {
         this.gradeLimit = gradeLimit;
         this.studentNumberLimit = studentNumberLimit;
         this.targetBoundary = targetBoundary;
+    }
+
+    public String getKakaoId() {
+        return kakaoId;
+    }
+
+    public void setKakaoId(String kakaoId) {
+        this.kakaoId = kakaoId;
     }
 
     public String getGender() {

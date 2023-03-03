@@ -13,6 +13,7 @@ public class UserDTO {
     private String state;
     private String gender;
     private String phoneNumber;
+    private String kakaoId;
     private String purpose;
     private String targetGender;
     private String targetBoundary;
@@ -20,6 +21,9 @@ public class UserDTO {
     private int studentNumberLimit;
     private LocalDateTime searchStart;
     private String partnerId;
+    private int yellowCard;
+    private LocalDateTime matchedTime;
+    private LocalDateTime unblockTime;
 
     public UserDTO() {
         this.id = "";
@@ -29,6 +33,7 @@ public class UserDTO {
         this.grade = 1;
         this.finding = false;
         this.state = "NOT_REGISTER";
+        this.yellowCard = 0;
     }
 
     public String getCollege() {
@@ -166,6 +171,38 @@ public class UserDTO {
 
     public void setSearchStart(LocalDateTime searchStart) {
         this.searchStart = searchStart;
+    }
+
+    public LocalDateTime getMatchedTime() {
+        return matchedTime;
+    }
+
+    public void setMatchedTime(LocalDateTime matchedTime) {
+        this.matchedTime = matchedTime;
+    }
+
+    public String getKakaoId() {
+        return kakaoId;
+    }
+
+    public void setKakaoId(String kakaoId) {
+        this.kakaoId = kakaoId;
+    }
+
+    public int getYellowCard() {
+        return yellowCard;
+    }
+
+    public void setYellowCard(int yellowCard) {
+        this.yellowCard = yellowCard;
+    }
+
+    public LocalDateTime getUnblockTime() {
+        return unblockTime;
+    }
+
+    public void setUnblockTime(LocalDateTime unblockTime) {
+        this.unblockTime = unblockTime;
     }
 
     @Override
