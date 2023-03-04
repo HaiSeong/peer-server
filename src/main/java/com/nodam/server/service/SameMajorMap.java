@@ -1,12 +1,20 @@
-//package com.nodam.server.service;
-//
-//import java.util.ArrayList;
-//import java.util.HashMap;
-//
-//public class SameMajorMap extends HashMap<String, Integer> {
-//
-//    public SameMajorMap() {
-//        super();
+package com.nodam.server.service;
+
+import java.util.HashMap;
+
+public class SameMajorMap extends HashMap<String, Integer> {
+
+    public SameMajorMap() {
+        super();
+        this.put("국제학부" , 0);
+        this.put("국제학부 영어영문학전공" , 0);
+        this.put("국제학부 일어일문학전공" , 0);
+        this.put("국제학부 중국통상학전공" , 0);
+        this.put("영어영문학전공" , 0);
+        this.put("일어일문학전공" , 0);
+        this.put("중국통상학전공" , 0);
+
+
 //        this.put("건설환경공학과" , "공과대학");
 //        this.put("건축공학과" , "공과대학");
 //        this.put("건축공학부 건축공학전공" , "공과대학");
@@ -41,14 +49,7 @@
 //
 //        this.put("교육학과" , "인문과학대학");
 //        this.put("국어국문학과" , "인문과학대학");
-//        this.put("국제학부" , "인문과학대학");
 //        this.put("역사학과" , "인문과학대학");
-//        this.put("국제학부 영어영문학전공" , "인문과학대학");
-//        this.put("국제학부 일어일문학전공" , "인문과학대학");
-//        this.put("국제학부 중국통상학전공" , "인문과학대학");
-//        this.put("영어영문학전공" , "인문과학대학");
-//        this.put("일어일문학전공" , "인문과학대학");
-//        this.put("중국통상학전공" , "인문과학대학");
 //
 //
 //        this.put("법학부" , "단과대학없음");
@@ -137,9 +138,11 @@
 //        this.put("컴퓨터공학과" , "소프트웨어융합대학");
 //        this.put("정보보호학과" , "소프트웨어융합대학");
 //
-//    }
-//
-//    public String getCollege(String major){
-//        return super.get(major);
-//    }
-//}
+    }
+
+    public int getCode(String major){
+        if (super.get(major) == null)
+            return -1;
+        return super.get(major);
+    }
+}

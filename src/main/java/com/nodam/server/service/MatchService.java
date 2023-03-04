@@ -30,8 +30,15 @@ public class MatchService {
     @Autowired
     SmsService smsService;
 
+    static private SameMajorMap sameMajorMap = new SameMajorMap();
+
     private boolean isSameMajor(String major1, String major2) {
-        return true;
+        if (major1.equals(major2))
+            return true;
+        else if (sameMajorMap.getCode(major1) >= 0 && sameMajorMap.getCode(major2) >= 0 && sameMajorMap.getCode(major1) == sameMajorMap.getCode(major2))
+            return true;
+
+        return false;
     }
 
     public ArrayList<UserDTO> getUsersFitConditions(UserDTO user, String gender, String purpose, String targetGender, int gradeLimit, int studentNumberLimit){
@@ -111,11 +118,11 @@ public class MatchService {
                 continue;
 
             // check targetBoundary
-            if (targetBoundary.equals("MAJOR") && !(user.getMajor().equals(otherUser.getMajor())  || user.getMajor().startsWith(otherUser.getMajor().substring(0, otherUser.getMajor().length() - 1)) || otherUser.getMajor().startsWith(user.getMajor().substring(0, user.getMajor().length() - 1))))
+            if (targetBoundary.equals("MAJOR") && !isSameMajor(user.getMajor(), otherUser.getMajor()))
                 continue;
             else if (targetBoundary.equals("COLLEGE") && !user.getCollege().equals(otherUser.getCollege()))
                 continue;
-            if (otherUser.getTargetBoundary().equals("MAJOR") && !(user.getMajor().equals(otherUser.getMajor()) || user.getMajor().startsWith(otherUser.getMajor().substring(0, otherUser.getMajor().length() - 1)) || otherUser.getMajor().startsWith(user.getMajor().substring(0, user.getMajor().length() - 1))))
+            if (otherUser.getTargetBoundary().equals("MAJOR") && !isSameMajor(user.getMajor(), otherUser.getMajor()))
                 continue;
             else if (otherUser.getTargetBoundary().equals("COLLEGE") && !user.getCollege().equals(otherUser.getCollege()))
                 continue;
@@ -162,7 +169,7 @@ public class MatchService {
         user.setSearchStart(LocalDateTime.now());
         logger.info("match user : " + id + " " + matchDTO);
         ArrayList<UserDTO> userPool = getUsersFitConditions(user, user.getGender(), user.getPurpose(), user.getTargetGender(), user.getGradeLimit(), user.getStudentNumberLimit(),  user.getTargetBoundary());
-        if (userPool.size() == 0) { // 바로 불가능한 경우
+        if (userPool.isEmpty()) { // 바로 불가능한 경우
             user.setFinding(true);
             user.setState("ON_GOING");
             userService.updateUser(id, user);
@@ -205,8 +212,10 @@ public class MatchService {
     public UserDTO getUser(String id) {
         UserDTO user = userService.getUserById(id);
         if (user.getState().equals("BLOCKED")){
-            if (LocalDateTime.now().isAfter(user.getUnblockTime()))
-                user.setState("NOT_REGISTERED");
+            if (LocalDateTime.now().isAfter(user.getUnblockTime())){
+                user.setState("NOT_REGISTER");
+                userService.updateUser(id, user);
+            }
         }
         return user;
     }

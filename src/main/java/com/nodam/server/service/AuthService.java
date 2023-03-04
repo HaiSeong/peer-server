@@ -46,7 +46,7 @@ public class AuthService {
         if (!isAuth)
             throw new RuntimeException("login failed");
         if (!userService.isUser(loginDTO.getId())) {
-            logger.info("createRefreshToken first login" + loginDTO.getId());
+            logger.info("createRefreshToken first login " + loginDTO.getId());
             UserDTO userDTO = new UserDTO();
             userDTO.setId(loginDTO.getId());
             userDTO.setStudentNumber(Integer.parseInt(loginDTO.getId().substring(0,2)));
