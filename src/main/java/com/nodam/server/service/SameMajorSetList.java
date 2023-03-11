@@ -1,19 +1,76 @@
 package com.nodam.server.service;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
-public class SameMajorMap extends HashMap<String, Integer> {
+public class SameMajorSetList extends ArrayList<Set<String>> {
 
-    public SameMajorMap() {
+    public SameMajorSetList() {
         super();
-        this.put("국제학부" , 0);
-        this.put("국제학부 영어영문학전공" , 0);
-        this.put("국제학부 일어일문학전공" , 0);
-        this.put("국제학부 중국통상학전공" , 0);
-        this.put("영어영문학전공" , 0);
-        this.put("일어일문학전공" , 0);
-        this.put("중국통상학전공" , 0);
+        Set<String> set;
 
+        set = new HashSet<>();
+        set.add("국제학부");set.add("영어영문학전공");set.add("일어일문학전공");set.add("중국통상학전공");
+        this.add(set);
+
+        set = new HashSet<>();
+        set.add("건축학과");set.add("건축공학부");set.add("건축학전공");
+        this.add(set);
+
+        set = new HashSet<>();
+        set.add("건축공학과");set.add("건축공학부");set.add("건축공학전공");
+        this.add(set);
+
+        set = new HashSet<>();
+        set.add("기계공학과");set.add("기계공학전공");set.add("기계항공우주공학부");
+        this.add(set);
+
+        set = new HashSet<>();
+        set.add("항공우주공학과");set.add("항공우주공학전공");set.add("기계항공우주공학부");
+        this.add(set);
+
+        set = new HashSet<>();
+        set.add("호텔관광경영학전공");set.add("호텔관광외식경영학부");
+        this.add(set);
+
+        set = new HashSet<>();
+        set.add("외식경영학전공");set.add("외식경영전공");set.add("호텔관광외식경영학부");
+        this.add(set);
+
+        set = new HashSet<>();
+        set.add("식품생명공학");set.add("식품생명공학전공");set.add("생명시스템학부");
+        this.add(set);
+
+        set = new HashSet<>();
+        set.add("바이오융합공학");set.add("바이오융합공학전공");set.add("생명시스템학부");
+        this.add(set);
+
+        set = new HashSet<>();
+        set.add("바이오산업자원공학");set.add("바이오산업자원공학전공");set.add("생명시스템학부");
+        this.add(set);
+
+        set = new HashSet<>();
+        set.add("비올라");set.add("바이올린");
+        this.add(set);
+
+        set = new HashSet<>();
+        set.add("한국화");set.add("서양화");
+        this.add(set);
+
+        set = new HashSet<>();
+        set.add("무인이동체공학전공");set.add("지능기전공학부");set.add("지능기전공학과");
+        this.add(set);
+
+        set = new HashSet<>();
+        set.add("스마트기기공학전공");set.add("지능기전공학부");set.add("지능기전공학과");
+        this.add(set);
+
+    }
+
+
+
+}
 
 //        this.put("건설환경공학과" , "공과대학");
 //        this.put("건축공학과" , "공과대학");
@@ -138,11 +195,3 @@ public class SameMajorMap extends HashMap<String, Integer> {
 //        this.put("컴퓨터공학과" , "소프트웨어융합대학");
 //        this.put("정보보호학과" , "소프트웨어융합대학");
 //
-    }
-
-    public int getCode(String major){
-        if (super.get(major) == null)
-            return -1;
-        return super.get(major);
-    }
-}

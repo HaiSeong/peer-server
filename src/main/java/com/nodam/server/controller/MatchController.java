@@ -48,7 +48,7 @@ public class MatchController {
         try {
             String accessToken = request.getHeader("Authorization");
             String id = authService.validateAccessToken(accessToken);
-            logger.info("POST /pool " + id + " " + matchDTO.toString());
+            logger.info("POST /pool " + id);
             matchService.match(id, matchDTO);
             logger.info("POST /pool " + id + " success");
             return new ResponseEntity<>("matching", HttpStatus.OK);

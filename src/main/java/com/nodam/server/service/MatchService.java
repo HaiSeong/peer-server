@@ -1,6 +1,5 @@
 package com.nodam.server.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nodam.server.controller.AuthController;
 import com.nodam.server.dto.UserDTO;
 import com.nodam.server.dto.MatchDTO;
@@ -9,15 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -30,17 +24,21 @@ public class MatchService {
     @Autowired
     SmsService smsService;
 
-    static private SameMajorMap sameMajorMap = new SameMajorMap();
+    static private SameMajorSetList sameMajorSetList = new SameMajorSetList();
 
     private boolean isSameMajor(String major1, String major2) {
         if (major1.equals(major2))
             return true;
-        else if (sameMajorMap.getCode(major1) >= 0 && sameMajorMap.getCode(major2) >= 0 && sameMajorMap.getCode(major1) == sameMajorMap.getCode(major2))
-            return true;
+
+        for (Set<String> set : sameMajorSetList){
+            if (set.contains(major1) && set.contains(major2))
+                return true;
+        }
 
         return false;
     }
 
+    @Transactional
     public ArrayList<UserDTO> getUsersFitConditions(UserDTO user, String gender, String purpose, String targetGender, int gradeLimit, int studentNumberLimit){
         ArrayList<UserDTO> findingUsers = userService.getFindingUsers();
         ArrayList<UserDTO> matchedList = new ArrayList<>();
@@ -82,6 +80,7 @@ public class MatchService {
         return matchedList;
     }
 
+    @Transactional
     public ArrayList<UserDTO> getUsersFitConditions(UserDTO user, String gender, String purpose, String targetGender, int gradeLimit, int studentNumberLimit, String targetBoundary){
         ArrayList<UserDTO> findingUsers = userService.getFindingUsers();
         ArrayList<UserDTO> matchedList = new ArrayList<>();
@@ -133,7 +132,7 @@ public class MatchService {
         return matchedList;
     }
 
-
+    @Transactional
     public Map<String, Integer> getPoolNumbers(String id, String gender, String purpose, String targetGender, int gradeLimit, int studentNumberLimit){
         Map<String, Integer> map = new HashMap<>();
 
@@ -156,6 +155,7 @@ public class MatchService {
     static String messageFormat1 = "안녕하세요 %s 학우님, 'Sejong Peer'입니다. %s 매칭이 완료되었습니다!";
     static String messageFormat2 = "%s님의 kakao id\n%s";
 
+    @Transactional
     public void match(String id, MatchDTO matchDTO) throws Exception{
         UserDTO user = userService.getUserById(id);
         user.setGender(matchDTO.getGender());
@@ -222,6 +222,7 @@ public class MatchService {
 
     static String messageFormat3 = "상대방이 관계를 끊었습니다.";
     static String messageFormat4 = "상대방이 관계를 끊었습니다. 상대방은 경고 누적으로 일시정지 되었습니다.";
+    @Transactional
     public void breakRelationship(String id){
         UserDTO user = userService.getUserById(id);
         logger.info("breakRelationship " + user.getId());
@@ -283,6 +284,7 @@ public class MatchService {
             partner.setSearchStart(null);
             partner.setMatchedTime(null);
             partner.setKakaoId(null);
+
             userService.updateUser(partner.getId(), partner);
         }
         else {
